@@ -1,11 +1,18 @@
 #pragma once
 
 #include "Odometry.h"
+#include "PID.h"
 #include "../Robot.h"
 #include <array>
 #include <cmath>
+#include <deque>
 
 class Drive {
+    private:
+        Pose prev;
+        std::deque<double> motion;
+        bool isMoving(double stop_threshold);
+
     public:
         Drive();
 

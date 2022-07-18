@@ -46,25 +46,10 @@ double PID::get_value(double error) {
       error_sum = 0;
     }
 
-
     prev_error = error;
     prev_time = time;
         
     return p_calc + i_calc + d_calc;
-}
-
-double PID::get_value2(double error) {
-    int time = pros::millis();
-	int delta_time = time - prev_time;
-	/* Allow for PID to take into account imperfect loop times- delay(5) does not always delay 5 milliseconds */
-
-    double derivative_of_error = (error - prev_error) / delta_time;
-
-	prev_error = error;
-	prev_time = time;
-
-	double speed = (kp * error) + (kd * derivative_of_error);
-    return speed;
 }
 
 /**

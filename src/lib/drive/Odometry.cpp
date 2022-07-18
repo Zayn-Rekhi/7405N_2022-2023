@@ -24,7 +24,7 @@ Odometry::Odometry(double horizontal_offset, double vertical_offset, double whee
 void Odometry::update(void *ptr) {
     while(true) {
         double cur_phi = TO_RAD(Robot::IMU.get_rotation());
-        double dphi = cur_phi - cur_point.heading_;
+        double dphi = cur_phi - cur_point.phi;
 
         double cur_turn_offset_x = 360 * (horizontal_offset_ * dphi) / wheel_circumference_;
         double cur_turn_offset_y = 360 * (vertical_offset_ * dphi) / wheel_circumference_;
@@ -35,15 +35,15 @@ void Odometry::update(void *ptr) {
         double cur_y = ((Robot::LE.get_position() - turn_offset_y) + (Robot::RE.get_position() + turn_offset_y)) / 2;
         double cur_x = Robot::BE.get_position() - turn_offset_x;
 
-        double dy = cur_y - cur_point.y_;
-        double dx = cur_x - cur_point.x_;
+        double dy = cur_y - cur_point.y;
+        double dx = cur_x - cur_point.x;
 
         double global_dy = dy * std::cos(cur_phi) + dx * std::sin(cur_phi);
         double global_dx = dx * std::cos(cur_phi) - dy * std::sin(cur_phi);
         
-        cur_point.y_ = (float) cur_point.y_ + global_dy;
-        cur_point.x_ = (float) cur_point.x_ + global_dx;
-        cur_point.heading_ = TO_DEG(cur_phi);
+        cur_point.x = (float) cur_point.x + global_dx;
+        cur_point.y = (float) cur_point.y + global_dy;
+        cur_point.phi = TO_DEG(cur_phi);
     }
 
 }
