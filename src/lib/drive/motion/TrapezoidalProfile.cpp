@@ -2,11 +2,11 @@
 
 
 TrapezoidalProfile::TrapezoidalProfile(double max_vel, double acc, double dec, double target) : max_vel(max_vel), 
-                                                                                    acc(acc), 
-                                                                                    dec(dec), 
-                                                                                    target(target), 
-                                                                                    time_acc(max_vel / acc), 
-                                                                                    time_dec(max_vel / dec) {
+                                                                                                acc(acc),
+                                                                                                dec(dec),
+                                                                                                target(target),
+                                                                                                time_acc(max_vel / acc),
+                                                                                                time_dec(max_vel / dec) {
     double dist_acc = 0.5 * this->time_acc * this->max_vel;
     double dist_dec = 0.5 * this->time_dec * this->max_vel;
     double dist_slew = this->target - (dist_acc + dist_dec);

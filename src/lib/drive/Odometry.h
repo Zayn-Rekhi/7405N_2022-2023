@@ -2,6 +2,7 @@
 
 #include "main.h"
 #include "../util/Pose.h"
+#include "../util/Util.h"
 
 #include <vector>
 #include <string>
@@ -14,9 +15,11 @@ class Odometry {
         double vertical_offset_;
         double wheel_circumference_;  
 
+        std::array<double, 3> prev_encs;
+
     public:
         Odometry(double horizontal_offset, double vertical_offset, double wheel_diameter);
-        void update(void *ptr);
+        void update();
 
         Pose getPose() { return cur_point; }
         void setPose(Pose point) { cur_point = point; }

@@ -1,13 +1,13 @@
 #include "Odometry.h"
 #include "../Robot.h"
 
-#define TO_RAD(n) n * M_PI / 180
-#define TO_DEG(n) n * 180 / M_PI
+#define TO_RAD(n)
+#define TO_DEG(n)
 
 Odometry::Odometry(double horizontal_offset, double vertical_offset, double wheel_diameter_) : horizontal_offset_(horizontal_offset),
                                                                                                vertical_offset_(vertical_offset),
                                                                                                wheel_circumference_(wheel_diameter_ * M_PI),
-                                                                                               cur_point(Pose(0, 0, 0)) {}
+                                                                                               cur_point(Pose()) {}
 
 
 
@@ -21,29 +21,27 @@ Odometry::Odometry(double horizontal_offset, double vertical_offset, double whee
  *   6. Rotate change in position by the change in angle
  *   7. Update X and Y coordinates
  */
-void Odometry::update(void *ptr) {
-    while(true) {
-        double cur_phi = TO_RAD(Robot::IMU.get_rotation());
-        double dphi = cur_phi - cur_point.phi;
+void Odometry::update() {
+    double cur_heading = util::to_rad(Robot::IMU.get_rotation());
 
-        double cur_turn_offset_x = 360 * (horizontal_offset_ * dphi) / wheel_circumference_;
-        double cur_turn_offset_y = 360 * (vertical_offset_ * dphi) / wheel_circumference_;
+    double cur_LE = (Robot::LE.get_position() / 100.0f);
+    double cur_RE = (Robot::RE.get_position() / 100.0f);
+    double cur_BE = (Robot::BE.get_position() / 100.0f);
 
-        double turn_offset_x = (float) turn_offset_x + cur_turn_offset_x;
-        double turn_offset_y = (float) turn_offset_y + cur_turn_offset_y;
+    double dLE = (cur_LE - prev_encs[0]) / 360.0f * wheel_circumference_;
+    double dRE = (cur_RE - prev_encs[1]) / 360.0f * wheel_circumference_;
+    double dBE = (cur_BE - prev_encs[2]) / 360.0f * wheel_circumference_;
 
-        double cur_y = ((Robot::LE.get_position() - turn_offset_y) + (Robot::RE.get_position() + turn_offset_y)) / 2;
-        double cur_x = Robot::BE.get_position() - turn_offset_x;
+    double d_phi = cur_heading - util::to_rad(cur_point.phi);
+    double dMidPos = (dLE + dRE) / 2.0;
+    double dPerpPos = dBE + vertical_offset_ * d_phi;
 
-        double dy = cur_y - cur_point.y;
-        double dx = cur_x - cur_point.x;
+    double global_x = (dMidPos * std::sin(cur_heading) + dPerpPos * std::cos(cur_heading));
+    double global_y = (dMidPos * std::cos(cur_heading) - dPerpPos * std::sin(cur_heading));
 
-        double global_dy = dy * std::cos(cur_phi) + dx * std::sin(cur_phi);
-        double global_dx = dx * std::cos(cur_phi) - dy * std::sin(cur_phi);
-        
-        cur_point.x = (float) cur_point.x + global_dx;
-        cur_point.y = (float) cur_point.y + global_dy;
-        cur_point.phi = TO_DEG(cur_phi);
-    }
+    cur_point.phi = util::to_deg(cur_heading);
+    cur_point.x += global_x;
+    cur_point.y += global_y;
 
+    prev_encs = {cur_LE, cur_RE, cur_BE};
 }

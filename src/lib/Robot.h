@@ -6,7 +6,7 @@
 
 // Util Imports
 #include "util/Threading.h"
-
+#include "util/Util.h"
 // Other
 #include <map>
 #include <functional>
@@ -14,7 +14,7 @@
 
 class Robot {
     public:
-        static pros::Controller Master;
+        static pros::Controller master;
 
         // Motors
         static pros::Motor FL;
@@ -29,12 +29,16 @@ class Robot {
         static pros::Imu IMU;
 
         // Drive
+        static Drive drive;
         static Odometry odometry;
         static PID power;
         static PID strafe;
         static PID turn;
 
+        static Threading threading;
+        
         static void driver(void *ptr);
         static void display(void *ptr);
+        static void odom(void *ptr);
 };
 

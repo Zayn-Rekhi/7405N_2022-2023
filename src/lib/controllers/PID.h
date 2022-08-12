@@ -22,8 +22,6 @@ class PID {
    public:
     PID(double p, double i, double d, double i_bound);
     double get_value(double error);
-    double get_value2(double error);
-
     void reset();
 };
 

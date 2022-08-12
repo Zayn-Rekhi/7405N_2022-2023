@@ -64,76 +64,6 @@
 //             }
 //         }
 //     }
-
-//     waypoints.push_back(points.back());
-//     waypointAmt = waypoints.size();
-
-//     double running_distances = 0;
-//     distances.push_back(running_distances);
-
-//     for(int i = 1; i < waypoints.size(); i++) {
-//         PPoint prev = waypoints.at(i - 1);
-//         PPoint next = waypoints.at(i);
-        
-//         double dist = distance(prev, next);
-//         double cur_dist = running_distances + dist;
-
-//         distances.push_back(cur_dist);
-//         running_distances += dist;
-//     }
-
-//     // printf("%d %d \n", distances.size(), waypoints.size());
-
-//     curvatures.push_back(0.0001);
-//     for(int i = 1; i < waypoints.size() - 1; i++) {
-//         PPoint prev = waypoints.at(i - 1);
-//         PPoint cur = waypoints.at(i);
-//         PPoint next = waypoints.at(i + 1);
-
-//         cur.x_ += 0.0001;
-//         cur.y_ += 0.0001;
-
-//         double k1 = 0.5 * (std::pow(cur.x_, 2) + std::pow(cur.y_, 2) - std::pow(prev.x_, 2) - std::pow(prev.y_, 2)) / (cur.x_ - prev.x_);
-//         double k2 = (cur.y_ - prev.y_) / (cur.x_ - prev.x_);
-
-//         double b = 0.5 * (std::pow(prev.x_, 2) - 2 * prev.x_ * k1 + std::pow(prev.y_, 2) - std::pow(next.x_, 2) + 2 * next.x_ * k1 - std::pow(next.y_, 2)) / (next.x_ * k2 - next.y_ + prev.y_ - prev.x_ * k2);
-//         double a = k1 - k2 * b;
-//         double r = std::sqrt(std::pow(cur.x_ - a, 2) + std::pow(cur.y_ - b, 2));
-
-//         double curvature = 1 / r;
-        
-//         // printf("%d %d %d %.2f\n", i-1, i, i+1, curvature);
-//         curvatures.push_back(curvature);
-//     }
-
-//     curvatures.push_back(0.0001);
-
-
-//     // printf("%d %d %d \n", distances.size(), waypoints.size(), curvatures.size());
-
-//     for(int i = 0; i < waypoints.size(); i++) {
-//         double curve = curvatures.at(i);
-//         double vel = 2 / curve;
-//         double targetVel = TARGET_VELOCITY <= vel ? TARGET_VELOCITY : vel;
-//         targetVelocity.push_back(targetVel);
-//     }
-
-//     targetVelocityAccDec.push_back(0);
-//     for(int i = waypoints.size() - 2; i > 0; i--) {
-//         double dist = distance(waypoints.at(i), waypoints.at(i + 1));
-//         double velocity = std::sqrt(std::pow(targetVelocityAccDec.at(0), 2) + (2 * TARGET_ACCEL * dist));
-//         double final_vel = targetVelocity.at(i) <= velocity ? targetVelocity.at(i) : velocity;
-//         targetVelocityAccDec.insert(targetVelocityAccDec.begin(), final_vel);
-//     }
-    
-//     targetVelocityAccDec.insert(targetVelocityAccDec.begin(), STARTING_VEL);
-
-
-//     // for(int i = 0; i < targetVelocity.size(); i++) {
-//     //     // printf("%.2f %.2f \n", targetVelocityAccDec.at(i), targetVelocity.at(i));
-//     //     // pros::delay(50);
-//     // }
-//     // printf("%d %d %d %d \n", distances.size(), waypoints.size(), curvatures.size(), targetVelocity.size());
 // }
 
 // /**
@@ -156,62 +86,6 @@
 
 //     curIndex = index;
 //     return index;
-// }
-
-// int PurePursuit::getClosestIndexNeon(PPoint curPos) {
-//     int loops = waypoints.size() / 4;
-//     int closest = 10000000;
-//     int closestIdx = 0;
-
-//     // cords of curPos into a vector
-//     float32x4x2_t base;
-//     base = vld2q_lane_f32((float32_t*)&curPos, base, 0);
-//     base = vld2q_lane_f32((float32_t*)&curPos, base, 1);
-//     base = vld2q_lane_f32((float32_t*)&curPos, base, 2);
-//     base = vld2q_lane_f32((float32_t*)&curPos, base, 3);
-
-//     float32x4x2_t data; // the x, y, heading of 4 points
-//     float32x4_t distances; // distances calculated
-
-//     PPoint* pData = waypoints.data();
-//     for (int i = 0; i < loops; i++) {
-//         data = vld2q_f32((float32_t*)(pData + i * 4));
-//         data.val[0] = vsubq_f32(data.val[0], base.val[0]);
-//         data.val[0] = vmulq_f32(data.val[0], data.val[0]);
-
-//         data.val[1] = vsubq_f32(data.val[1], base.val[1]);
-//         data.val[1] = vmulq_f32(data.val[1], data.val[1]);
-
-//         distances = vaddq_f32(data.val[0], data.val[1]);
-//         distances = vrsqrteq_f32(distances);
-//         distances = vrecpeq_f32(distances);
-
-//         #pragma GCC push_options
-//         #pragma GCC unroll 4
-//         for (int j = 0; j < 4; j++) {
-//             float32_t dist = vgetq_lane_f32(distances, j);
-//             if (dist < closest) {
-//                 closest = dist;
-//                 closestIdx = i * 4 + j;
-//             }
-//         }
-
-//         #pragma GCC pop_options
-//     }
-
-//     // handles the rest of the elements when it can't be vectorized
-//     // meaning that 
-//     for (int i = loops * 4; i < waypoints.size(); i++) {
-//         const PPoint& potential = waypoints.at(i);
-//         double dist = distance(curPos, potential);
-        
-//         if (dist < closest) {
-//             closest =  dist;
-//             closestIdx = i;
-//         }
-//     }
-
-//     return closestIdx;
 // }
 
 // Point PurePursuit::calcActLookAhead(Point curPos, int closestPointIndex) {

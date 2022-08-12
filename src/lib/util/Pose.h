@@ -47,7 +47,7 @@ struct Pose {
     }
 
     Pose operator-(const Pose& sub) {
-        return Pose(this->x - sub.x, this->y - sub.y);
+        return Pose(this->x - sub.x, this->y - sub.y, this->phi - sub.phi);
     }
 
     Pose operator*(double mult) {
