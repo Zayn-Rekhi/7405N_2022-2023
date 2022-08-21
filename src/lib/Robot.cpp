@@ -77,8 +77,6 @@ Threading Robot::threading(100);
 /*                               Utility 🔨 ⛏ 🛠                             */
 /* ========================================================================== */
 void Robot::display(void *ptr) {
-
-
     while (true) {
         Pose cur = Robot::odometry.getPose();
 
