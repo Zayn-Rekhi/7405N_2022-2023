@@ -8,7 +8,7 @@
 
 # Subsystems
 - [ ] Getting flywheel code working<br>
-- [ ] Getting point facing code working<br>
+- [x] Getting point facing code working<br>
 - [ ] Flywheel power adjustment<br>
 - [ ] Intake<br>
 - [ ] Expansion<br>
