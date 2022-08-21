@@ -1,10 +1,9 @@
 # 7405N Code
 
 # Drive
-- [ ] Finish Odometry<br>
-- [ ] Add un-tested omnidirectional code<br>
-- [ ] Test omnidirectional code<br>
-- [ ] Add Differential Code<br>
+- [x] Finish Odometry<br>
+- [x] Add un-tested omnidirectional code<br>
+- [x] Test omnidirectional code<br>
 - [ ] Get Pure Pursuit working<br> 
 
 # Subsystems
@@ -13,6 +12,3 @@
 - [ ] Flywheel power adjustment<br>
 - [ ] Intake<br>
 - [ ] Expansion<br>
-
-# Util
-- [ ] Implement Co-routines<br>
