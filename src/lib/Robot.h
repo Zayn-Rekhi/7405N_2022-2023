@@ -21,6 +21,8 @@ class Robot {
         static pros::Motor BL;
         static pros::Motor FR;
         static pros::Motor BR;
+        static pros::Motor Flywheel1;
+        static pros::Motor Flywheel2;
 
         // Sensors
         static pros::Rotation LE;
