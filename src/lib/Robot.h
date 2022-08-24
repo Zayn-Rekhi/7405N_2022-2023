@@ -35,6 +35,9 @@ class Robot {
         static PID strafe;
         static PID turn;
 
+        // Subsystems
+        static FlyWheel flywheel;
+
         static Threading threading;
         
         static void driver(void *ptr);
