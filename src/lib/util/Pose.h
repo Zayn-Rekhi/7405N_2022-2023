@@ -65,7 +65,7 @@ struct Pose {
     }
 
     double distanceTo(const Pose& to) {
-        return sqrt(((to.x - x) * (to.x - x)) + ((to.y - y) * (to.y - y)));
+        return sqrt(pow((to.x - x), 2) + pow(to.y - y, 2));
     }
     
     //returns angle relative to y axis in degrees from -180 to 180
