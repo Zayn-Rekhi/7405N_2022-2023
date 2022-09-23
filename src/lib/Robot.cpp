@@ -13,11 +13,17 @@ pros::Motor Robot::BL(19, true);   // Back Left Drive Wheel
 pros::Motor Robot::FR(5, false);   // Forward Right Drive Wheel
 pros::Motor Robot::BR(4, false);  // Back Right Drive Wheel
 
+//Flywheel Jawn
+pros::Motor Robot::FLY1(8, false);  // Forward Left Drive Wheel
+pros::Motor Robot::FLY2(9, true);   // Back Left Drive Wheel
+
 // Sensors
 pros::Rotation Robot::LE(12);
 pros::Rotation Robot::RE(14);
 pros::Rotation Robot::BE(2);
 pros::IMU Robot::IMU(6);
+
+
 
 
 /* ========================================================================== */
@@ -35,36 +41,39 @@ void Robot::driver(void *ptr) {
     Pose target = Pose(6, 57, 0);
     bool goal_centric = false;
 
-    while(true) {
-        int power = master.get_analog(ANALOG_LEFT_Y);
-        int strafe = master.get_analog(ANALOG_LEFT_X);
-        int turn = master.get_analog(ANALOG_RIGHT_X); 
+    FLY1 = 127;
+    FLY2 = 127;
 
-        if(std::abs(power) < 20) power = 0;
-        if(std::abs(strafe) < 20) strafe = 0;
-        if(std::abs(turn) < 20) turn = 0;
+    // while(true) {
+    //     int power = master.get_analog(ANALOG_LEFT_Y);
+    //     int strafe = master.get_analog(ANALOG_LEFT_X);
+    //     int turn = master.get_analog(ANALOG_RIGHT_X); 
 
-        bool up_button = master.get_digital_new_press(DIGITAL_UP);
-        if(up_button && !goal_centric) {
-            goal_centric = true;
-        } else if (up_button && goal_centric) {
-            goal_centric = false;
-        }
+    //     if(std::abs(power) < 20) power = 0;
+    //     if(std::abs(strafe) < 20) strafe = 0;
+    //     if(std::abs(turn) < 20) turn = 0;
 
-        if(goal_centric) {
-            double angle = Robot::odometry.getPose().angleTo(target);
-            double headingDegrees = Robot::odometry.getPose().phi;
-            double curPosHeading = std::fmod(headingDegrees, 180.0) - 180.0 * std::round(headingDegrees / (360.0));
-            double headingErr = angle - curPosHeading;
-            if (std::fabs(headingErr) > 180.0) {
-                headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0;
-            }
-            turn = Robot::turn.get_value(headingErr);
-        }
+    //     bool up_button = master.get_digital_new_press(DIGITAL_UP);
+    //     if(up_button && !goal_centric) {
+    //         goal_centric = true;
+    //     } else if (up_button && goal_centric) {
+    //         goal_centric = false;
+    //     }
 
-        drive.move(power, strafe, turn, true); 
-        pros::delay(5);
-    }
+    //     if(goal_centric) {
+    //         double angle = Robot::odometry.getPose().angleTo(target);
+    //         double headingDegrees = Robot::odometry.getPose().phi;
+    //         double curPosHeading = std::fmod(headingDegrees, 180.0) - 180.0 * std::round(headingDegrees / (360.0));
+    //         double headingErr = angle - curPosHeading;
+    //         if (std::fabs(headingErr) > 180.0) {
+    //             headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0;
+    //         }
+    //         turn = Robot::turn.get_value(headingErr);
+    //     }
+
+    //     drive.move(power, strafe, turn, true); 
+    //     pros::delay(5);
+    // }
 }
 
 
@@ -89,6 +98,7 @@ void Robot::display(void *ptr) {
         pros::lcd::print(3, "%.2f %.2f", RE_val, LE_val);
         pros::lcd::print(4, "%.2f %.2f", BE_val, IMU.get_rotation());
         pros::lcd::print(5, "%.2f %.2f %.2f", cur.x, cur.y, cur.phi);
+        pros::lcd::print(6, "%.2f %.2f", FLY1.get_actual_velocity() * 5 * 3, FLY2.get_actual_velocity() * 5 * 3);
 
         pros::delay(5);
     }
