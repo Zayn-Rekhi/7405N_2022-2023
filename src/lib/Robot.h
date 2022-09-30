@@ -2,7 +2,6 @@
 
 #include "main.h"
 #include "drive/Drive.h"
-#include "subsystems/Subsystems.h"
 
 // Util Imports
 #include "util/Threading.h"
@@ -21,8 +20,15 @@ class Robot {
         static pros::Motor BL;
         static pros::Motor FR;
         static pros::Motor BR;
+
+        // Intake
+        static pros::Motor INT1;
+        static pros::Motor INT2;
+
+        // Flywheel
         static pros::Motor FLY1;
         static pros::Motor FLY2;
+
 
         // Sensors
         static pros::Rotation LE;
@@ -36,9 +42,6 @@ class Robot {
         static PID power;
         static PID strafe;
         static PID turn;
-
-        // Subsystems
-        // static FlyWheel flywheel;
 
         static Threading threading;
         
