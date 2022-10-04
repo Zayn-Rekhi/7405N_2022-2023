@@ -36,6 +36,9 @@ class Robot {
         static pros::Rotation BE;
         static pros::Imu IMU;
 
+        //Flywheel Piston
+        static pros::ADIDigitalOut FLYPIST;
+
         // Drive
         static Drive drive;
         static Odometry odometry;

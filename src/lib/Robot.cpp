@@ -8,24 +8,27 @@
 pros::Controller Robot::master(pros::E_CONTROLLER_MASTER);
 
 // Motors
-pros::Motor Robot::FL(12, true);  // Forward Left Drive Wheel
-pros::Motor Robot::BL(13, true);   // Back Left Drive Wheel
-pros::Motor Robot::FR(1, false);   // Forward Right Drive Wheel
-pros::Motor Robot::BR(7, false);  // Back Right Drive Wheel
+pros::Motor Robot::FL(16, true);  // Forward Left Drive Wheel
+pros::Motor Robot::BL(8, true);   // Back Left Drive Wheel
+pros::Motor Robot::FR(12, false);   // Forward Right Drive Wheel
+pros::Motor Robot::BR(10, false);  // Back Right Drive Wheel
 
 // Intake
-pros::Motor Robot::INT1(8, false);
-pros::Motor Robot::INT2(9, true);
+pros::Motor Robot::INT1(21, false);
+pros::Motor Robot::INT2(19, true);
 
 // Flywheel
 pros::Motor Robot::FLY1(3, true);
-pros::Motor Robot::FLY2(5, false);
+pros::Motor Robot::FLY2(6, false);
 
 // Sensors
-pros::Rotation Robot::LE(12);
+pros::Rotation Robot::LE(13);
 pros::Rotation Robot::RE(14);
-pros::Rotation Robot::BE(2);
-pros::IMU Robot::IMU(6);
+pros::Rotation Robot::BE(9);
+pros::IMU Robot::IMU(5);
+
+// FLYPIST
+pros::ADIDigitalOut Robot::FLYPIST(1);
 
 
 
@@ -48,6 +51,9 @@ void Robot::driver(void *ptr) {
 
     FLY1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     FLY2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+    bool activate_ejector = false;
+
 
     while(true) {
 
@@ -111,7 +117,23 @@ void Robot::driver(void *ptr) {
          FLY1 = flyspeed;
          FLY2 = flyspeed;
 
-         pros::delay(5);
+         // Ejector
+         bool eject = master.get_digital_new_press(DIGITAL_X);
+         bool triple_eject = master.get_digital_new_press(DIGITAL_A);
+
+         if (eject && !activate_ejector) {
+             FLYPIST.set_value(true);
+             activate_ejector = true;
+         } else if (activate_ejector) {
+             pros::delay(200);
+             FLYPIST.set_value(false);
+             activate_ejector = false;
+         }
+
+
+
+
+        pros::delay(5);
      }
 }
 
