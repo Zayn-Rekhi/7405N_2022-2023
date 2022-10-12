@@ -21,5 +21,7 @@ void initialize() {
     Robot::LE.reverse();
     Robot::BE.reverse();
 
+    Robot::EXP1.set_value(false);
+
     pros::delay(250);
 }

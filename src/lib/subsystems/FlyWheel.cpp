@@ -1,19 +1,39 @@
-// #include "FlyWheel.h"
-// #include "../Robot.h"
+#include "FlyWheel.h"
+#include "../Robot.h"
 
-// FlyWheel::FlyWheel(double flywheel_angle, Pose goal_coords, double flywheel_height) : flywheel_angle_(flywheel_angle), goal_coords_(goal_coords), flywheel_height_(flywheel_height) {}
+FlyWheel::FlyWheel() {}
 
-// double FlyWheel::get_velocity() {
-//     double horizontal_dist = Robot::odometry.getPose().distanceTo(goal_coords_);
-//     double vertical_dist = 2.5-flywheel_height_;
-//     double numerator = pow(16.09, 0.5) * horizontal_dist;
-//     double denominator = util::to_deg(std::cos(flywheel_angle_))*pow(horizontal_dist*util::to_deg(std::sin(flywheel_angle_))/util::to_deg(std::cos(flywheel_angle_))-2.5,0.5);
-//     return numerator/denominator;
-// }
+void FlyWheel::set_velocity(double speed) {
+    target_speed = speed;
+}
 
-// void FlyWheel::shoot_disc() {
-//     Robot::drive.rotate_to(goal_coords_);
-//     // Requirements to create flywheel launch code: Diameter of flywheel, how flywheel velocity relates to disc velocity
-//     //
-    
-// }
+double FlyWheel::get_velocity() {
+    double vel1 = Robot::FLY1.get_actual_velocity() * 5 * 3;
+    double vel2 = Robot::FLY2.get_actual_velocity() * 5 * 3;
+    return (vel1 + vel2) / 2;
+}
+
+bool FlyWheel::is_settled() {
+    bool settled = std::abs(target_speed - get_velocity()) < 40;
+    if (settled) settle_count++;
+    if (settle_count >= 5) {
+        settle_count = 0;
+        return true;
+    }
+    return false;
+}
+
+void FlyWheel::update() {
+    double error = target_speed - get_velocity();
+    double vel = Robot::fly_controller.get_value(error);
+
+    printf("%f\n", std::abs(vel - prev_vel));
+    if(std::abs(vel - prev_vel) > 0.00005) {
+        int sign = vel - prev_vel < 0 ? -1 : 1;
+        vel += sign * 0.0000005;
+    }
+
+    Robot::FLY1 = vel * 127.0;
+    Robot::FLY2 = vel * 127.0;
+    prev_vel = vel;
+}

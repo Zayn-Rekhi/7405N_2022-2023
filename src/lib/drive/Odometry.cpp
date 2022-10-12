@@ -1,9 +1,6 @@
 #include "Odometry.h"
 #include "../Robot.h"
 
-#define TO_RAD(n)
-#define TO_DEG(n)
-
 Odometry::Odometry(double horizontal_offset, double vertical_offset, double wheel_diameter_) : horizontal_offset_(horizontal_offset),
                                                                                                vertical_offset_(vertical_offset),
                                                                                                wheel_circumference_(wheel_diameter_ * M_PI),
@@ -32,14 +29,14 @@ void Odometry::update() {
     double dRE = (cur_RE - prev_encs[1]) / 360.0f * wheel_circumference_;
     double dBE = (cur_BE - prev_encs[2]) / 360.0f * wheel_circumference_;
 
-    double d_phi = cur_heading - util::to_rad(cur_point.phi);
+    double d_theta = cur_heading - util::to_rad(cur_point.theta);
     double dMidPos = (dLE + dRE) / 2.0;
-    double dPerpPos = dBE + vertical_offset_ * d_phi;
+    double dPerpPos = dBE + vertical_offset_ * d_theta;
 
     double global_x = (dMidPos * std::sin(cur_heading) + dPerpPos * std::cos(cur_heading));
     double global_y = (dMidPos * std::cos(cur_heading) - dPerpPos * std::sin(cur_heading));
 
-    cur_point.phi = util::to_deg(cur_heading);
+    cur_point.theta = util::to_deg(cur_heading);
     cur_point.x += global_x;
     cur_point.y += global_y;
 

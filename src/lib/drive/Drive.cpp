@@ -3,20 +3,6 @@
 
 Drive::Drive() {}
 
-bool Drive::isMoving(double stop_threshold) {
-	Pose error = Robot::odometry.getPose() - prev;
-	if (motion.size() == 10) 
-		motion.pop_front();
-    motion.push_back(std::abs(error.x) + std::abs(error.y));
-    
-	double sum = 0;
-	for (int i = 0; i < motion.size(); i++) sum += motion[i];
-	double motion_average = sum / 10;
-
-	if (motion_average < stop_threshold) return true;
-	return false;
-
-}
 
 void Drive::brake(pros::motor_brake_mode_e_t brake) {
     Robot::FL.set_brake_mode(brake);
@@ -25,66 +11,113 @@ void Drive::brake(pros::motor_brake_mode_e_t brake) {
     Robot::BR.set_brake_mode(brake);
 }
 
-void Drive::move(double power, double strafe, double turn, bool driver) {
-    double scalar = 1;
-
-    double powers[] {
-        power + strafe + turn,
-        power - strafe - turn,
-		power - strafe + turn, 
-		power + strafe - turn
-    };
-
-    if(!driver) {
-		int max = *std::max_element(powers, powers + 4);
-		int min = abs(*std::min_element(powers, powers + 4));
-
-		double true_max = double(std::max(max, min));
-		scalar = (true_max > 127) ? 127 / true_max : 1;
-    } 
-
-    Robot::FL = powers[0] * scalar;
-    Robot::FR = powers[1] * scalar;
-    Robot::BL = powers[2] * scalar;
-    Robot::BR = powers[3] * scalar; 
+void Drive::move(double power, double turn) {
+    Robot::FL = power + turn;
+    Robot::BL = power + turn;
+    Robot::FR = power - turn;
+    Robot::BR = power - turn;
 }
 
-void Drive::move_to(Pose target, std::array<double, 3> speeds, bool pp) {
-	Pose error = target - Robot::odometry.getPose();	
-	int time = pros::millis();
+void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
+    Pose curPos = Robot::odometry.getPose();
 
-    while (std::abs(error.y) > 0.1 || std::abs(error.x) > 0.1 || std::abs(error.phi) > 1) {   
-		Pose cur = Robot::odometry.getPose();
-        
-		double power = Robot::power.get_value(error.y * std::cos(cur.phi) + error.x * std::sin(cur.phi)) * speeds[0];
-        double strafe = Robot::strafe.get_value(error.x * std::cos(cur.phi) - error.y * std::sin(cur.phi)) * speeds[1];
-        double turn = Robot::turn.get_value(error.phi) * speeds[2];
+    double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+    double angleToPoint = util::to_deg(curPos.angleTo(target));
+    double headingErr = angleToPoint - curPosHeading;
+    if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
+    double direction = std::cos(util::to_rad(headingErr)) > 0 ? 1 : -1;
+    if (direction < 0) { headingErr = headingErr > 0 ? headingErr - 180.0 : headingErr + 180.0; }
+    double moveErr = curPos.distanceTo(target);
 
+    double moveCompleteBuff = 0;
 
-        move(power, strafe, turn, false);
-        error = target - cur;
-		pros::delay(5);
+    int i = 0;
+    while (headingErr > turnAcc || moveCompleteBuff < 5) {
+        i++;
+        curPos = Robot::odometry.getPose();
+        moveErr = curPos.distanceTo(target);
 
+        curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+        if (moveErr > 6.0) { angleToPoint = util::to_deg(curPos.angleTo(target)); }
+        headingErr = angleToPoint - curPosHeading;
+        if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
+        double realHeadingErr = util::to_deg(curPos.angleTo(target)) - curPosHeading;
+        direction = std::cos(util::to_rad(realHeadingErr)) > 0 ? 1 : -1;
+        if (direction < 0) { headingErr = headingErr > 0 ? headingErr - 180.0 : headingErr + 180.0; }
+
+        if (std::fabs(headingErr) > turnAcc) {
+            double turnSpeed = Robot::turn.get_value(headingErr);
+            if (i % 3 == 0) {
+                std::cout << "curPos: " << curPos.toString() << ", target: " << target.toString() << ", ";
+                std::cout << "direction: " << direction << ", moveErr: " << moveErr << ", ";
+                std::cout << "targetHeading: " << util::to_deg(curPos.angleTo(target)) << ", ";
+                std::cout << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed << std::endl;
+            }
+            move(0, turnSpeed);
+        } else {
+            if (moveErr > moveAcc) {
+                moveCompleteBuff = 0;
+            } else {
+                moveCompleteBuff += 1;
+            }
+            double turnSpeed = Robot::turn.get_value(headingErr);
+            double moveSpeed = Robot::power.get_value(moveErr);
+            double speedSum = moveSpeed + std::fabs(turnSpeed);
+            double maxMoveSpeed = moveSpeed * (127.0 / speedSum);
+            double maxTurnSpeed = turnSpeed * (127.0 / speedSum);
+            moveSpeed = moveSpeed < maxMoveSpeed ? moveSpeed : maxMoveSpeed;
+            turnSpeed = std::fabs(turnSpeed) < std::fabs(maxTurnSpeed) ? turnSpeed : maxTurnSpeed;
+            if (i % 3 == 0) {
+                std::cout << "curPos: " << curPos.toString() << ", target: " << target.toString() << ", "
+                          << "moveCompleteBuff: " << moveCompleteBuff << ", "
+                          << "moveErr: " << moveErr << ", direction: " << direction << ", moveSpeed: " << moveSpeed << ", "
+                          << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed
+                          << std::endl;
+            }
+            move(moveSpeed * direction, turnSpeed);
+        }
     }
 
-	move(0, 0, 0, false);
-	brake(pros::E_MOTOR_BRAKE_HOLD);
+    Robot::power.reset();
+    Robot::turn.reset();
+    move(0, 0);
 
-	motion = std::deque<double>();	
-	Robot::power.reset();    
-	Robot::strafe.reset();
-	Robot::turn.reset();	
 }
 
-void Drive::rotate_to(double angle) {
-	Pose cur = Robot::odometry.getPose();
-	cur.phi = angle;
-	move_to(cur);
+void Drive::rotate_to(double targetHeading, double turnAcc) {
+    Pose curPos = Robot::odometry.getPose();
+    double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+    double headingErr = targetHeading - curPosHeading;
+    if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
+
+    int i = 0;
+    double turnCompleteBuff = 0;
+    while (turnCompleteBuff < 5) {
+        i++;
+        if (std::fabs(headingErr) > turnAcc) {
+            turnCompleteBuff = 0;
+        } else {
+            turnCompleteBuff += 1;
+        }
+        curPos = Robot::odometry.getPose();
+        curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+        headingErr = targetHeading - curPosHeading;
+        if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
+
+        double turnSpeed = Robot::turn.get_value(headingErr);
+
+        if (i % 3 == 0) {
+            std::cout << "curPos: " << curPos.toString() << ", targetHeading: " << targetHeading << ", "
+                      << "turnCompleteBuff: " << turnCompleteBuff << ", "
+                      << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed
+                      << std::endl;
+        }
+
+        move(0, turnSpeed);
+    }
+
+    Robot::turn.reset();
+    move(0, 0);
 }
 
-void Drive::rotate_to(Pose target) {
-	double angle = Robot::odometry.getPose().angleTo(target);
-	Pose cur = Robot::odometry.getPose();
-	cur.phi = angle;
-	move_to(cur);
-}
+

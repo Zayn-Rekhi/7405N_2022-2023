@@ -10,36 +10,36 @@
 struct Pose {
     double x;
     double y;
-    double phi;
+    double theta;
 
     Pose() {
         this->x = 0;
         this->y = 0;
-        this->phi = 0;
+        this->theta = 0;
     }
 
     Pose(double x, double y) {
         this->x = x;
         this->y = y;
-        this->phi = 0;
+        this->theta = 0;
     }
 
-    Pose(double x, double y, double phi) {
+    Pose(double x, double y, double theta) {
         this->x = x;
         this->y = y;
-        this->phi = phi;
+        this->theta = theta;
     }
 
     Pose(const Pose& Pose) {
         this->x = Pose.x;
         this->y = Pose.y;
-        this->phi = Pose.phi;
+        this->theta = Pose.theta;
     }
 
     void operator=(const Pose& equal) {
         this->x = equal.x;
         this->y = equal.y;
-        this->phi = equal.phi;
+        this->theta = equal.theta;
     }
 
     Pose operator+(const Pose& add) {
@@ -47,7 +47,7 @@ struct Pose {
     }
 
     Pose operator-(const Pose& sub) {
-        return Pose(this->x - sub.x, this->y - sub.y, this->phi - sub.phi);
+        return Pose(this->x - sub.x, this->y - sub.y, this->theta - sub.theta);
     }
 
     Pose operator*(double mult) {
@@ -68,11 +68,10 @@ struct Pose {
         return sqrt(pow((to.x - x), 2) + pow(to.y - y, 2));
     }
     
-    //returns angle relative to y axis in degrees from -180 to 180
-    double angleTo(const Pose& to) { 
+    double angleTo(const Pose& to) {
         double tox = to.x - this->x;
         double toy = to.y - this->y;
-        return ((atan2(tox, toy)) * (180.0 / M_PI));
+        return std::atan2(tox, toy);
     }
 
     double magnitude() {
@@ -81,5 +80,12 @@ struct Pose {
 
     double dot(const Pose& p) {
         return (x * p.x) + (y * p.y);
+    }
+
+    std::string toString() {
+        std::string sx = std::to_string((x));
+        std::string sy = std::to_string((y));
+        std::string sh = std::to_string((theta));
+        return "( " + sx + " , " + sy + ") h: " + sh;
     }
 };

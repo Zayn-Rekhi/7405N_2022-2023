@@ -52,6 +52,12 @@ double PID::get_value(double error) {
     return p_calc + i_calc + d_calc;
 }
 
+void PID::set_value(double p, double i, double d) {
+    kp = p;
+    ki = i;
+    kd = d;
+}
+
 /**
  * @brief resets running pid values for next run
  */

@@ -2,8 +2,7 @@
 #include "lib/Robot.h"
 
 void autonomous() {
-    Robot::threading.start("display", Robot::display);
-    Robot::threading.start("odometry", Robot::odom);
+    Robot::threading.start("display", Robot::display_thread);
+    Robot::threading.start("odometry", Robot::odom_thread);
 
-    Robot::drive.rotate_to(Pose(10, 0, 0));
 }
