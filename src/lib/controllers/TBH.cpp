@@ -7,8 +7,8 @@ TBH::TBH(double _gain) {
 double TBH::get_value(double error) {
     output += gain * error;
 
-    if(output > 1) output = 1;
-    else if (output < -1) output = -1;
+    if(output > 12000) output = 12000;
+    else if (output < 0) output = 0;
 
     if (std::signbit(error) != std::signbit(prev_error)) {
         output = 0.5 * (output + tbh);

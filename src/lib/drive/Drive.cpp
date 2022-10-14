@@ -62,6 +62,7 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
             }
             double turnSpeed = Robot::turn.get_value(headingErr);
             double moveSpeed = Robot::power.get_value(moveErr);
+
             double speedSum = moveSpeed + std::fabs(turnSpeed);
             double maxMoveSpeed = moveSpeed * (127.0 / speedSum);
             double maxTurnSpeed = turnSpeed * (127.0 / speedSum);
@@ -78,9 +79,12 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
         }
     }
 
+    printf("nigga");
     Robot::power.reset();
     Robot::turn.reset();
     move(0, 0);
+
+    brake(pros::E_MOTOR_BRAKE_HOLD);
 
 }
 
@@ -118,6 +122,8 @@ void Drive::rotate_to(double targetHeading, double turnAcc) {
 
     Robot::turn.reset();
     move(0, 0);
+    brake(pros::E_MOTOR_BRAKE_HOLD);
+
 }
 
 

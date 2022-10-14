@@ -27,13 +27,16 @@ void FlyWheel::update() {
     double error = target_speed - get_velocity();
     double vel = Robot::fly_controller.get_value(error);
 
-    printf("%f\n", std::abs(vel - prev_vel));
-    if(std::abs(vel - prev_vel) > 0.00005) {
-        int sign = vel - prev_vel < 0 ? -1 : 1;
-        vel += sign * 0.0000005;
-    }
+//    printf("Target: %f Current: %f Error: %f \n", target_speed, get_velocity(), error);
 
-    Robot::FLY1 = vel * 127.0;
-    Robot::FLY2 = vel * 127.0;
+//    printf("%f %f \n", vel - prev_vel, error);
+
+//    if(std::abs(vel - prev_vel) > 0.00005) {
+//        int sign = vel - prev_vel < 0 ? -1 : 1;
+//        vel += sign * 0.0000000005;
+//    }
+
+    Robot::FLY1.move_voltage(vel);
+    Robot::FLY2.move_voltage(vel) ;
     prev_vel = vel;
 }

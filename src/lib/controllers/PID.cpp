@@ -30,32 +30,31 @@ PID::PID(double p, double i, double d, double i_bound) {
  * @return Sum of P, I, and D calculations: SPEED
  */
 double PID::get_value(double error) {
-    int time = pros::millis();
     error_sum += error;
 
     double delta_error = error - prev_error;
-    int delta_time = time - prev_time;
-    double derivative_of_error = delta_error / delta_time;
+    double derivative_of_error = delta_error / 5;
 
     double p_calc = kp * error;
     double i_calc = ki * error_sum;
     double d_calc = kd * derivative_of_error;
-    
+    printf("%f %f %f %f \n", delta_error, derivative_of_error, d_calc);
+
     if(std::abs(error) > integral_bound && integral_bound != 0) {
       i_calc = 0;
       error_sum = 0;
     }
 
     prev_error = error;
-    prev_time = time;
-        
+
     return p_calc + i_calc + d_calc;
 }
 
-void PID::set_value(double p, double i, double d) {
+void PID::set_value(double p, double i, double d, double i_bound) {
     kp = p;
     ki = i;
     kd = d;
+    integral_bound = i_bound;
 }
 
 /**

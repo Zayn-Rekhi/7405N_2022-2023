@@ -34,21 +34,21 @@ pros::ADIDigitalOut Robot::FLYPIST(1);
 pros::ADIDigitalOut Robot::EXP1(3);
 
 
-
 /* ========================================================================== */
 /*                               Drive 🚗 🏎️ 🚘                               */
 /* ========================================================================== */
 Drive Robot::drive;
 Odometry Robot::odometry(7.38, 5.5, 2.75);
 
-PID Robot::power(2.1, 0.1, 4.5, 5);
-PID Robot::turn(10, 0.0, 0.0, 0.0);
+PID Robot::power(6.9, 0.00001, 0, 5);
+PID Robot::turn(0, 0, 0, 0);
+//PID Robot::turn(1.4, 0.005, 0.0, 6);
 
 /* ========================================================================== */
 /*                              Subsystems 🦾🦿                               */
 /* ========================================================================== */
 FlyWheel Robot::flywheel;
-TBH Robot::fly_controller(0.0000005);
+TBH Robot::fly_controller(1);
 
 /* ========================================================================== */
 /*                               Utility 🔨 ⛏ 🛠                             */
@@ -64,11 +64,12 @@ void Robot::driver_thread(void *ptr) {
     int flyspeed_mode = 0;
     bool flyspeed_change = false;
 
+    int flyspeed = 0;
+
     FLY1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     FLY2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     bool activate_ejector = false;
-
 
     while(true) {
         //Drive
@@ -97,6 +98,17 @@ void Robot::driver_thread(void *ptr) {
         }
 
         // Shoot
+//        bool shoot_inc = master.get_digital(DIGITAL_L1);
+//        bool shoot_dec = master.get_digital(DIGITAL_L2);
+//
+//        if (shoot_inc) flyspeed += 5;
+//        if (shoot_dec) flyspeed -= 5;
+//
+//        if (flyspeed > 3000) flyspeed = 300;
+//        if (flyspeed < 0) flyspeed = 0;
+//
+//        flywheel.set_velocity(flyspeed);
+
         bool shoot_inc = master.get_digital_new_press(DIGITAL_L1);
         bool shoot_dec = master.get_digital_new_press(DIGITAL_L2);
 
@@ -122,7 +134,7 @@ void Robot::driver_thread(void *ptr) {
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(1000);
+                flywheel.set_velocity(2700);
                 break;
             case 2:
                 flywheel.set_velocity(2000);
@@ -185,7 +197,7 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(2, "BL: %.2f BR: %.2f", BL.get_actual_velocity(), BR.get_actual_velocity());
         pros::lcd::print(3, "%.2f %.2f", RE_val, LE_val);
         pros::lcd::print(4, "%.2f %.2f", BE_val, IMU.get_rotation());
-        pros::lcd::print(5, "%.2f %.2f %.2f", cur.x, cur.y, cur.theta);
+        pros::lcd::print(5, "X: %.2f Y: %.2f Theta: %.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(6, "%.2f %.2f", FLY1.get_actual_velocity() * 5 * 3, FLY2.get_actual_velocity() * 5 * 3);
 
         pros::delay(5);
