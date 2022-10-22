@@ -13,14 +13,15 @@
  * @param d Sets the D coefficient kd
  * @param i_bound Sets the boundary for I
  */
-PID::PID(double p, double i, double d, double i_bound) {
+PID::PID(double p, double i, double d, double i_bound, double minspeed_) {
     kp = p;
     ki = i;
     kd = d;
     integral_bound = i_bound;
+    minspeed = minspeed_;
+
 
     error_sum = 0;      //Needed for Integral
-    prev_time = 0;  //Needed for Derivative
     prev_error = 0;
 }
 
@@ -38,7 +39,6 @@ double PID::get_value(double error) {
     double p_calc = kp * error;
     double i_calc = ki * error_sum;
     double d_calc = kd * derivative_of_error;
-    printf("%f %f %f %f \n", delta_error, derivative_of_error, d_calc);
 
     if(std::abs(error) > integral_bound && integral_bound != 0) {
       i_calc = 0;
@@ -46,15 +46,19 @@ double PID::get_value(double error) {
     }
 
     prev_error = error;
+    double speed = p_calc + i_calc + d_calc;
 
-    return p_calc + i_calc + d_calc;
+    if(std::abs(speed) < minspeed && speed != 0) { speed = speed < 0 ? -speed : speed; }
+
+    return speed;
 }
 
-void PID::set_value(double p, double i, double d, double i_bound) {
+void PID::set_value(double p, double i, double d, double i_bound, double minspeed_) {
     kp = p;
     ki = i;
     kd = d;
     integral_bound = i_bound;
+    minspeed = minspeed_;
 }
 
 /**
@@ -62,6 +66,5 @@ void PID::set_value(double p, double i, double d, double i_bound) {
  */
 void PID::reset() {
     error_sum = 0;
-    prev_time = 0;
     prev_error = 0;
 }

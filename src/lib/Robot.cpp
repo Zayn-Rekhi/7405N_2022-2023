@@ -40,8 +40,8 @@ pros::ADIDigitalOut Robot::EXP1(3);
 Drive Robot::drive;
 Odometry Robot::odometry(7.38, 5.5, 2.75);
 
-PID Robot::power(6.9, 0.00001, 0, 5);
-PID Robot::turn(0, 0, 0, 0);
+PID Robot::power(6.9, 0.00001, 0, 5, 0);
+PID Robot::turn(0, 0, 0, 0, 0);
 //PID Robot::turn(1.4, 0.005, 0.0, 6);
 
 /* ========================================================================== */
@@ -59,7 +59,7 @@ Threading Robot::threading(100);
 /*                               Threads 🧵🪡                                 */
 /* ========================================================================== */
 void Robot::driver_thread(void *ptr) {
-    Pose target = Pose(6, 57, 0);
+    Pose target = Pose(19, -111, 0);
     bool goal_centric = false;
     int flyspeed_mode = 0;
     bool flyspeed_change = false;
@@ -71,6 +71,8 @@ void Robot::driver_thread(void *ptr) {
 
     bool activate_ejector = false;
 
+    Robot::turn.set_value(5, 0, 0, 0, 0);
+
     while(true) {
         //Drive
         int power = master.get_analog(ANALOG_LEFT_Y);
@@ -78,6 +80,24 @@ void Robot::driver_thread(void *ptr) {
 
         if(std::abs(power) < 20) power = 0;
         if(std::abs(turn) < 20) turn = 0;
+
+//        bool up_button = master.get_digital_new_press(DIGITAL_UP);
+//        if(up_button && !goal_centric) {
+//            goal_centric = true;
+//        } else if (up_button && goal_centric) {
+//            goal_centric = false;
+//        }
+//
+//        if(goal_centric) {
+//            double angle = Robot::odometry.getPose().angleTo(target);
+//            double headingDegrees = Robot::odometry.getPose().theta;
+//            double curPosHeading = std::fmod(headingDegrees, 180.0) - 180.0 * std::round(headingDegrees / (360.0));
+//            double headingErr = angle - curPosHeading;
+//            if (std::fabs(headingErr) > 180.0) {
+//                headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0;
+//            }
+//            turn = Robot::turn.get_value(headingErr);
+//        }
 
         drive.move(power, turn);
 
@@ -97,22 +117,27 @@ void Robot::driver_thread(void *ptr) {
             INT2 = 0;
         }
 
+
+
         // Shoot
-//        bool shoot_inc = master.get_digital(DIGITAL_L1);
-//        bool shoot_dec = master.get_digital(DIGITAL_L2);
+//        bool shoot_inc = master.get_digital_new_press(DIGITAL_L1);
+//        bool shoot_dec = master.get_digital_new_press(DIGITAL_L2);
 //
-//        if (shoot_inc) flyspeed += 5;
-//        if (shoot_dec) flyspeed -= 5;
+//        if (shoot_inc) flyspeed += 50;
+//        if (shoot_dec) flyspeed -= 50;
 //
-//        if (flyspeed > 3000) flyspeed = 300;
+//        if (flyspeed > 3200) flyspeed = 3200;
 //        if (flyspeed < 0) flyspeed = 0;
 //
 //        flywheel.set_velocity(flyspeed);
+//        printf("%.2f \n", flyspeed);
+
+        //2500 2450
 
         bool shoot_inc = master.get_digital_new_press(DIGITAL_L1);
         bool shoot_dec = master.get_digital_new_press(DIGITAL_L2);
 
-        if(shoot_inc && flyspeed_mode < 3) {
+        if(shoot_inc && flyspeed_mode < 2) {
             flyspeed_mode++;
             fly_controller.reset();
             flyspeed_change = true;
@@ -128,19 +153,16 @@ void Robot::driver_thread(void *ptr) {
             master.rumble(".");
             flyspeed_change = false;
         }
-
+//
         switch(flyspeed_mode) {
             case 0:
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(2700);
+                flywheel.set_velocity(2500);
                 break;
             case 2:
-                flywheel.set_velocity(2000);
-                break;
-            case 3:
-                flywheel.set_velocity(3000);
+                flywheel.set_velocity(2700);
                 break;
         }
 
@@ -152,7 +174,6 @@ void Robot::driver_thread(void *ptr) {
 
         if(triple_eject) {
             for(int i = 0; i < 6; i++) {
-                printf("%.2f \n", i);
                 if (i % 2 == 0) {
                     pros::delay(150);
                     FLYPIST.set_value(true);
@@ -195,9 +216,9 @@ void Robot::display_thread(void *ptr) {
 
         pros::lcd::print(1, "FL: %.2f FR: %.2f", FL.get_actual_velocity(), FR.get_actual_velocity());
         pros::lcd::print(2, "BL: %.2f BR: %.2f", BL.get_actual_velocity(), BR.get_actual_velocity());
-        pros::lcd::print(3, "%.2f %.2f", RE_val, LE_val);
+        pros::lcd::print(3, "Temp1: %.2f Temp2: %.2f", FLY1.get_temperature(), FLY2.get_temperature());
         pros::lcd::print(4, "%.2f %.2f", BE_val, IMU.get_rotation());
-        pros::lcd::print(5, "X: %.2f Y: %.2f Theta: %.2f", cur.x, cur.y, cur.theta);
+        pros::lcd::print(5, "X: %.2f Y: %.2f Angle: %.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(6, "%.2f %.2f", FLY1.get_actual_velocity() * 5 * 3, FLY2.get_actual_velocity() * 5 * 3);
 
         pros::delay(5);
@@ -229,7 +250,7 @@ void Robot::odom_thread(void *ptr) {
 
 void Robot::flywheel_thread(void *ptr) {
     while(true) {
-        flywheel.update();
+//        flywheel.update();
         pros::delay(5);
     }
 }

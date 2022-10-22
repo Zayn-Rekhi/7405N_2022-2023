@@ -21,6 +21,7 @@ void initialize() {
     Robot::LE.reverse();
     Robot::BE.reverse();
 
+    Robot::FLYPIST.set_value(false);
     Robot::EXP1.set_value(false);
 
     pros::delay(250);

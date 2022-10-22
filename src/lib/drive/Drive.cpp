@@ -18,13 +18,14 @@ void Drive::move(double power, double turn) {
     Robot::BR = power - turn;
 }
 
-void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
+void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed) {
     Pose curPos = Robot::odometry.getPose();
 
-    double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+//    double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+    double curPosHeading = curPos.theta;
+
     double angleToPoint = util::to_deg(curPos.angleTo(target));
     double headingErr = angleToPoint - curPosHeading;
-    if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
     double direction = std::cos(util::to_rad(headingErr)) > 0 ? 1 : -1;
     if (direction < 0) { headingErr = headingErr > 0 ? headingErr - 180.0 : headingErr + 180.0; }
     double moveErr = curPos.distanceTo(target);
@@ -37,10 +38,10 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
         curPos = Robot::odometry.getPose();
         moveErr = curPos.distanceTo(target);
 
-        curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+//        curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
+        curPosHeading = curPos.theta;
         if (moveErr > 6.0) { angleToPoint = util::to_deg(curPos.angleTo(target)); }
         headingErr = angleToPoint - curPosHeading;
-        if (std::fabs(headingErr) > 180.0) { headingErr = headingErr > 0.0 ? headingErr - 360.0 : headingErr + 360.0; }
         double realHeadingErr = util::to_deg(curPos.angleTo(target)) - curPosHeading;
         direction = std::cos(util::to_rad(realHeadingErr)) > 0 ? 1 : -1;
         if (direction < 0) { headingErr = headingErr > 0 ? headingErr - 180.0 : headingErr + 180.0; }
@@ -53,6 +54,7 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
                 std::cout << "targetHeading: " << util::to_deg(curPos.angleTo(target)) << ", ";
                 std::cout << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed << std::endl;
             }
+            printf("turning turn move\n");
             move(0, turnSpeed);
         } else {
             if (moveErr > moveAcc) {
@@ -75,11 +77,14 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc) {
                           << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed
                           << std::endl;
             }
+            printf("moving\n");
+
+            if(std::abs(moveSpeed) > maxspeed) {moveSpeed = moveSpeed < 0 ? -maxspeed : maxspeed; }
             move(moveSpeed * direction, turnSpeed);
         }
     }
 
-    printf("nigga");
+    printf("done");
     Robot::power.reset();
     Robot::turn.reset();
     move(0, 0);
@@ -115,11 +120,13 @@ void Drive::rotate_to(double targetHeading, double turnAcc) {
                       << "turnCompleteBuff: " << turnCompleteBuff << ", "
                       << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed
                       << std::endl;
+            printf("turning turn function\n");
         }
 
         move(0, turnSpeed);
     }
 
+    printf("turn done");
     Robot::turn.reset();
     move(0, 0);
     brake(pros::E_MOTOR_BRAKE_HOLD);

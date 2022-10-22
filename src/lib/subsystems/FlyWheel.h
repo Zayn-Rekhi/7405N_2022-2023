@@ -6,7 +6,6 @@
 class FlyWheel{
      private:
         double target_speed = 0;
-        double prev_vel = 0;
         int settle_count = 0;
         int mode = 0;
 

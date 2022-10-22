@@ -14,15 +14,15 @@ class PID {
     double ki;
     double kd;
     double integral_bound;
+    double minspeed;
 
     double error_sum;
     double prev_error;
-    int prev_time;
 
    public:
-    PID(double p, double i, double d, double i_bound);
+    PID(double p, double i, double d, double i_bound, double minspeed);
     double get_value(double error);
-    void set_value(double p, double i, double d, double i_bound);
+    void set_value(double p, double i, double d, double i_bound, double minspeed);
     void reset();
 };
 

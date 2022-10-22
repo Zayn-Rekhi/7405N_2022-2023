@@ -13,6 +13,6 @@ class Drive {
         void brake(pros::motor_brake_mode_e_t);
 
         void move(double power, double turn);
-        void move_to(Pose target, double moveAcc, double turnAcc);
+        void move_to(Pose target, double moveAcc, double turnAcc, double maxspeed = 127);
         void rotate_to(double targetHeading, double turnAcc);
 };
