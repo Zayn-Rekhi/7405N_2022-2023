@@ -149,20 +149,20 @@ void Robot::driver_thread(void *ptr) {
             flyspeed_change = true;
         }
 
-        if(flyspeed_change && flywheel.is_settled()) {
-            master.rumble(".");
+        if(flyspeed_change) {
+            master.rumble("___");
             flyspeed_change = false;
         }
-//
+
         switch(flyspeed_mode) {
             case 0:
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(2500);
+                flywheel.set_velocity(2100);
                 break;
             case 2:
-                flywheel.set_velocity(3000);
+                flywheel.set_velocity(2300);
                 break;
         }
 
@@ -198,6 +198,18 @@ void Robot::driver_thread(void *ptr) {
         if(expand) {
             EXP1.set_value(true);
             pros::delay(200);
+        }
+
+        bool roller = master.get_digital_new_press(DIGITAL_B);
+        if(roller) {
+            INT1 = 127;
+            INT1 = 127;
+
+            drive.move(30, 0);
+            pros::delay(250);
+
+            INT1 = 127;
+            INT1 = 127;
         }
 
         pros::delay(5);
@@ -250,7 +262,7 @@ void Robot::odom_thread(void *ptr) {
 
 void Robot::flywheel_thread(void *ptr) {
     while(true) {
-//        flywheel.update();
+        flywheel.update();
         pros::delay(5);
     }
 }

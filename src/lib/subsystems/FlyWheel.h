@@ -18,6 +18,6 @@ class FlyWheel{
         void set_mode(int mode_) { mode = mode_; };
         int get_mode() { return mode; };
 
-        bool is_settled();
+        bool is_settled(double threshold);
         void update();
  };
