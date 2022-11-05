@@ -2,7 +2,21 @@
 #include "lib/Robot.h"
 
 void initialize() {
+//
+
+
+    Robot::EXP1.set_value(true);
+
+    Robot::FLYPIST.set_value(true);
+
+
     pros::delay(250);
+//    Display display;
+//    display.addScreen("selection", new SelectionScreen());
+//    SelectionScreen* screen = static_cast<SelectionScreen*>(display.getScreen("selection"));
+//    Robot::teamSelection = TeamSelection::UNKNOWN;
+//    display.show("selection", true, 100);
+//    screen->getSelection();
     pros::lcd::initialize();
     pros::delay(250);
 
@@ -21,8 +35,6 @@ void initialize() {
     Robot::LE.reverse();
     Robot::BE.reverse();
 
-    Robot::FLYPIST.set_value(false);
-    Robot::EXP1.set_value(false);
 
     pros::delay(250);
 }

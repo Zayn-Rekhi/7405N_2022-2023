@@ -11,6 +11,9 @@
 // Util Imports
 #include "util/Threading.h"
 #include "util/Util.h"
+#include "util/selectionScreen.h"
+#include "util/Display.h"
+#include "util/selectionScreen.h"
 
 // Other
 #include <map>
@@ -59,7 +62,9 @@ class Robot {
 
         // Utility
         static Threading threading;
-        
+        static TeamSelection teamSelection;
+
+
         static void driver_thread(void *ptr);
         static void display_thread(void *ptr);
         static void controller_thread(void *ptr);

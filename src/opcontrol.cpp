@@ -7,5 +7,4 @@ void opcontrol() {
     Robot::threading.start("display", Robot::display_thread);
     Robot::threading.start("controller", Robot::controller_thread);
     Robot::threading.start("flywheel", Robot::flywheel_thread);
-
 }

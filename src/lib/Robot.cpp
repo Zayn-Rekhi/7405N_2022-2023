@@ -54,6 +54,7 @@ TBH Robot::fly_controller(1);
 /*                               Utility 🔨 ⛏ 🛠                             */
 /* ========================================================================== */
 Threading Robot::threading(100);
+TeamSelection Robot::teamSelection = TeamSelection::UNKNOWN;
 
 /* ========================================================================== */
 /*                               Threads 🧵🪡                                 */
@@ -176,27 +177,27 @@ void Robot::driver_thread(void *ptr) {
             for(int i = 0; i < 6; i++) {
                 if (i % 2 == 0) {
                     pros::delay(150);
-                    FLYPIST.set_value(true);
+                    FLYPIST.set_value(false);
                 } else {
                     pros::delay(150);
-                    FLYPIST.set_value(false);
+                    FLYPIST.set_value(true);
                 }
             }
         }
 
         if (eject && !activate_ejector) {
-            FLYPIST.set_value(true);
+            FLYPIST.set_value(false);
             activate_ejector = true;
         } else if (activate_ejector) {
             pros::delay(150);
-            FLYPIST.set_value(false);
+            FLYPIST.set_value(true);
             activate_ejector = false;
         }
 
         // Expansion
         bool expand = master.get_digital_new_press(DIGITAL_DOWN);
         if(expand) {
-            EXP1.set_value(true);
+            EXP1.set_value(false);
             pros::delay(200);
         }
 
