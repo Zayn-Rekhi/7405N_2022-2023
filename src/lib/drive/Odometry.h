@@ -12,13 +12,12 @@ class Odometry {
         Pose cur_point;     
 
         double horizontal_offset_;
-        double vertical_offset_;
-        double wheel_circumference_;  
+        double wheel_circumference_;
 
-        std::array<double, 3> prev_encs;
+        std::array<double, 2> prev_encs;
 
     public:
-        Odometry(double horizontal_offset, double vertical_offset, double wheel_diameter);
+        Odometry(double horizontal_offset, double wheel_diameter);
         void update();
 
         Pose getPose() { return cur_point; }

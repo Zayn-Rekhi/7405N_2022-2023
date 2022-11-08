@@ -26,29 +26,24 @@ class Robot {
 
         // Motors
         static pros::Motor FL;
+        static pros::Motor CL;
         static pros::Motor BL;
+
         static pros::Motor FR;
+        static pros::Motor CR;
         static pros::Motor BR;
 
         // Intake
-        static pros::Motor INT1;
-        static pros::Motor INT2;
+        static pros::Motor INT;
 
         // Flywheel
-        static pros::Motor FLY1;
-        static pros::Motor FLY2;
+        static pros::Motor FLY;
 
         // Sensors
-        static pros::Rotation LE;
-        static pros::Rotation RE;
-        static pros::Rotation BE;
         static pros::Imu IMU;
 
         // Flywheel Piston
-        static pros::ADIDigitalOut FLYPIST;
-
-        // Flywheel Piston
-        static pros::ADIDigitalOut EXP1;
+        static pros::ADIDigitalOut EXP;
 
         // Drive
         static Drive drive;

@@ -1,10 +1,9 @@
 #include "Odometry.h"
 #include "../Robot.h"
 
-Odometry::Odometry(double horizontal_offset, double vertical_offset, double wheel_diameter_) : horizontal_offset_(horizontal_offset),
-                                                                                               vertical_offset_(vertical_offset),
-                                                                                               wheel_circumference_(wheel_diameter_ * M_PI),
-                                                                                               cur_point(Pose()) {}
+Odometry::Odometry(double horizontal_offset, double wheel_diameter_) : horizontal_offset_(horizontal_offset),
+                                                                       wheel_circumference_(wheel_diameter_ * M_PI),
+                                                                       cur_point(Pose()) {}
 
 
 
@@ -19,26 +18,21 @@ Odometry::Odometry(double horizontal_offset, double vertical_offset, double whee
  *   7. Update X and Y coordinates
  */
 void Odometry::update() {
-    double cur_heading = util::to_rad(Robot::IMU.get_rotation());
+    double curHeading = util::to_rad(Robot::IMU.get_rotation());
+    double curLE = Robot::CL.get_position() / 100;
+    double curRE = Robot::CR.get_position() / 100;
 
-    double cur_LE = (Robot::LE.get_position() / 100.0f);
-    double cur_RE = (Robot::RE.get_position() / 100.0f);
-    double cur_BE = (Robot::BE.get_position() / 100.0f);
+    double dLE = ((curLE - prev_encs[0]) / 360.0f) * wheel_circumference_;
+    double dRE = ((curRE - prev_encs[1]) / 360.0f) * wheel_circumference_;
 
-    double dLE = (cur_LE - prev_encs[0]) / 360.0f * wheel_circumference_;
-    double dRE = (cur_RE - prev_encs[1]) / 360.0f * wheel_circumference_;
-    double dBE = (cur_BE - prev_encs[2]) / 360.0f * wheel_circumference_;
+    prev_encs[0] = curLE;
+    prev_encs[1] = curRE;
 
-    double d_theta = cur_heading - util::to_rad(cur_point.theta);
-    double dMidPos = (dLE + dRE) / 2.0;
-    double dPerpPos = dBE + vertical_offset_ * d_theta;
+    double vertical_motion = (dRE + dLE) / 2;
+    double posX = vertical_motion * std::cos(curHeading);
+    double posY = vertical_motion * std::sin(curHeading);
 
-    double global_x = (dMidPos * std::sin(cur_heading) + dPerpPos * std::cos(cur_heading));
-    double global_y = (dMidPos * std::cos(cur_heading) - dPerpPos * std::sin(cur_heading));
-
-    cur_point.theta = util::to_deg(cur_heading);
-    cur_point.x += global_x;
-    cur_point.y += global_y;
-
-    prev_encs = {cur_LE, cur_RE, cur_BE};
+    /* Updates current X and Y coordinates */
+    cur_point.x += posX;
+    cur_point.y += posY;
 }

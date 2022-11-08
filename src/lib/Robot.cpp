@@ -8,37 +8,31 @@
 pros::Controller Robot::master(pros::E_CONTROLLER_MASTER);
 
 // Motors
-pros::Motor Robot::FL(3, true);  // Forward Left Drive Wheel
-pros::Motor Robot::BL(16, true);   // Back Left Drive Wheel
-pros::Motor Robot::FR(18, false);   // Forward Right Drive Wheel
-pros::Motor Robot::BR(10, false);  // Back Right Drive Wheel
+pros::Motor Robot::FL(21, true);  // Forward Left Drive Wheel
+pros::Motor Robot::CL(7, false);
+pros::Motor Robot::BL(16, false);   // Back Left Drive Wheel
+pros::Motor Robot::FR(13, false);   // Forward Right Drive Wheel
+pros::Motor Robot::CR(3, true);
+pros::Motor Robot::BR(5, true);  // Back Right Drive Wheel
 
 // Intake
-pros::Motor Robot::INT1(19, false);
-pros::Motor Robot::INT2(1, true);
+pros::Motor Robot::INT(19, false);
 
 // Flywheel
-pros::Motor Robot::FLY1(2, true);
-pros::Motor Robot::FLY2(9, false);
+pros::Motor Robot::FLY(2, true);
 
 // Sensors
-pros::Rotation Robot::LE(21);
-pros::Rotation Robot::RE(17);
-pros::Rotation Robot::BE(20);
 pros::IMU Robot::IMU(11);
 
-// Flywheel Piston
-pros::ADIDigitalOut Robot::FLYPIST(1);
-
 // Expansion Pistons
-pros::ADIDigitalOut Robot::EXP1(3);
+pros::ADIDigitalOut Robot::EXP(3);
 
 
 /* ========================================================================== */
 /*                               Drive 🚗 🏎️ 🚘                               */
 /* ========================================================================== */
 Drive Robot::drive;
-Odometry Robot::odometry(7.38, 5.5, 2.75);
+Odometry Robot::odometry(5.5, 2.75);
 
 PID Robot::power(6.9, 0.00001, 0, 5, 0);
 PID Robot::turn(0, 0, 0, 0, 0);
@@ -67,8 +61,7 @@ void Robot::driver_thread(void *ptr) {
 
     int flyspeed = 0;
 
-    FLY1.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    FLY2.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    FLY.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     bool activate_ejector = false;
 
@@ -108,14 +101,11 @@ void Robot::driver_thread(void *ptr) {
         bool outtake = master.get_digital(DIGITAL_R1);
 
         if(intake) {
-            INT1 = 127;
-            INT2 = 127;
+            INT = 127;
         } else if (outtake) {
-            INT1 = -127;
-            INT2 = -127;
+            INT = -127;
         } else {
-            INT1 = 0;
-            INT2 = 0;
+            INT = 0;
         }
 
 
@@ -170,47 +160,17 @@ void Robot::driver_thread(void *ptr) {
         flywheel.set_mode(flyspeed_mode);
 
         // Ejector
-        bool eject = master.get_digital_new_press(DIGITAL_X);
-        bool triple_eject = master.get_digital_new_press(DIGITAL_A);
-
-        if(triple_eject) {
-            for(int i = 0; i < 6; i++) {
-                if (i % 2 == 0) {
-                    pros::delay(150);
-                    FLYPIST.set_value(false);
-                } else {
-                    pros::delay(150);
-                    FLYPIST.set_value(true);
-                }
-            }
-        }
-
-        if (eject && !activate_ejector) {
-            FLYPIST.set_value(false);
-            activate_ejector = true;
-        } else if (activate_ejector) {
-            pros::delay(150);
-            FLYPIST.set_value(true);
-            activate_ejector = false;
-        }
-
-        // Expansion
-        bool expand = master.get_digital_new_press(DIGITAL_DOWN);
-        if(expand) {
-            EXP1.set_value(false);
-            pros::delay(200);
-        }
 
         bool roller = master.get_digital_new_press(DIGITAL_B);
         if(roller) {
-            INT1 = 127;
-            INT1 = 127;
+            INT = 127;
+            INT = 127;
 
             drive.move(30, 0);
             pros::delay(250);
 
-            INT1 = 127;
-            INT1 = 127;
+            INT = 127;
+            INT = 127;
         }
 
         pros::delay(5);
@@ -223,16 +183,10 @@ void Robot::display_thread(void *ptr) {
     while (true) {
         Pose cur = Robot::odometry.getPose();
 
-        double RE_val = RE.get_position();
-        double BE_val = BE.get_position();
-        double LE_val = LE.get_position();
-
-        pros::lcd::print(1, "FL: %.2f FR: %.2f", FL.get_actual_velocity(), FR.get_actual_velocity());
-        pros::lcd::print(2, "BL: %.2f BR: %.2f", BL.get_actual_velocity(), BR.get_actual_velocity());
-        pros::lcd::print(3, "Temp1: %.2f Temp2: %.2f", FLY1.get_temperature(), FLY2.get_temperature());
-        pros::lcd::print(4, "%.2f %.2f", BE_val, IMU.get_rotation());
-        pros::lcd::print(5, "X: %.2f Y: %.2f Angle: %.2f", cur.x, cur.y, cur.theta);
-        pros::lcd::print(6, "%.2f %.2f", FLY1.get_actual_velocity() * 5 * 3, FLY2.get_actual_velocity() * 5 * 3);
+        pros::lcd::print(1, "Left: %.2f %.2f %.2f", FL.get_actual_velocity(), CL.get_actual_velocity(), BL.get_actual_velocity());
+        pros::lcd::print(1, "Right: %.2f %.2f %.2f", FR.get_actual_velocity(), CR.get_actual_velocity(), BR.get_actual_velocity());
+        pros::lcd::print(3, "Temp: %.2f", FLY.get_temperature());
+        pros::lcd::print(4, "X: %.2f Y: %.2f Angle: %.2f", cur.x, cur.y, cur.theta);
 
         pros::delay(5);
     }

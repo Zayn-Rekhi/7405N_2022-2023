@@ -9,12 +9,16 @@ void Drive::brake(pros::motor_brake_mode_e_t brake) {
     Robot::FR.set_brake_mode(brake);
     Robot::BL.set_brake_mode(brake);
     Robot::BR.set_brake_mode(brake);
+    Robot::CR.set_brake_mode(brake);
+    Robot::CL.set_brake_mode(brake);
 }
 
 void Drive::move(double power, double turn) {
     Robot::FL = power + turn;
     Robot::BL = power + turn;
+    Robot::CL = power + turn;
     Robot::FR = power - turn;
+    Robot::CR = power - turn;
     Robot::BR = power - turn;
 }
 

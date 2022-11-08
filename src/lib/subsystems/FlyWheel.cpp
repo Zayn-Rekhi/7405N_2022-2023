@@ -9,9 +9,7 @@ void FlyWheel::set_velocity(double speed_) {
 }
 
 double FlyWheel::get_velocity() {
-    double vel1 = Robot::FLY1.get_actual_velocity() * 5 * 3;
-    double vel2 = Robot::FLY2.get_actual_velocity() * 5 * 3;
-    return (vel1 + vel2) / 2;
+    return Robot::FLY.get_actual_velocity() * 5 * 3;
 }
 
 bool FlyWheel::is_settled(double threshold) {
@@ -30,6 +28,5 @@ void FlyWheel::update() {
 
     printf("Target: %f Current: %f Error: %f Settled: %d Output: %f \n", target_speed, get_velocity(), error, vel);
 
-    Robot::FLY1.move_voltage(vel);
-    Robot::FLY2.move_voltage(vel);
+    Robot::FLY.move_voltage(vel);
 }
