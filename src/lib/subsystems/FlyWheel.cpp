@@ -5,7 +5,6 @@ FlyWheel::FlyWheel() {}
 
 void FlyWheel::set_velocity(double speed_) {
     target_speed = speed_;
-    printf("%.2f \n", target_speed);
 }
 
 double FlyWheel::get_velocity() {

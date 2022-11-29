@@ -9,6 +9,7 @@ namespace util {
     static double to_deg(double n) {
         return n * 180 / M_PI;
     }
+
     static int sign(double val) {
         return val > 0 ? 1 : -1;
     }
@@ -20,6 +21,24 @@ namespace util {
             return sign(val) * max;
         }
         return val;
+    }
+
+    static int dampen(int input) {
+        double s = 80;
+        double a = .64;
+        double v = (127*a-127)/(-s*s+254*s-16129);
+        double c = a - 2*v*s;
+        double output;
+        if (abs(input) < abs(s)) {
+            output = a * input;
+        }
+        else {
+            double x = abs(input);
+            double y = -(s - x) * (c + v * (s + x)) + a * s;
+            output = y * input / abs(input);
+        }
+
+        return (int)std::round(output);
     }
 }
 

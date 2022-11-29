@@ -72,16 +72,16 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed
             double speedSum = moveSpeed + std::fabs(turnSpeed);
             double maxMoveSpeed = moveSpeed * (127.0 / speedSum);
             double maxTurnSpeed = turnSpeed * (127.0 / speedSum);
+
             moveSpeed = moveSpeed < maxMoveSpeed ? moveSpeed : maxMoveSpeed;
             turnSpeed = std::fabs(turnSpeed) < std::fabs(maxTurnSpeed) ? turnSpeed : maxTurnSpeed;
-            if (i % 3 == 0) {
+            if (i % 5 == 0) {
                 std::cout << "curPos: " << curPos.toString() << ", target: " << target.toString() << ", "
                           << "moveCompleteBuff: " << moveCompleteBuff << ", "
                           << "moveErr: " << moveErr << ", direction: " << direction << ", moveSpeed: " << moveSpeed << ", "
                           << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed
                           << std::endl;
             }
-            printf("moving\n");
 
             if(std::abs(moveSpeed) > maxspeed) {moveSpeed = moveSpeed < 0 ? -maxspeed : maxspeed; }
             move(moveSpeed * direction, turnSpeed);
