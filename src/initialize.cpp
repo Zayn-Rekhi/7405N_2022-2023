@@ -19,20 +19,6 @@ void initialize() {
     }
 }
 
-void competition_initialize() {
-    Robot::EXP.set_value(true);
-
-    pros::lcd::initialize();
-    pros::delay(100);
-
-    Robot::IMU.reset();
-    int time = 0;
-    while(Robot::IMU.is_calibrating()) {
-        time += 5;
-        if(time > IMUDELAYTIME)
-            break;
-        pros::delay(5);
-    }
-}
+void competition_initialize() {}
 
 void disabled() {}

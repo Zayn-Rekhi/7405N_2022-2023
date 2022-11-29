@@ -89,7 +89,7 @@ void Robot::driver_thread(void *ptr) {
         if(activate_triple_shot) {
             if(triple_shot_time <= 5) {
                 INT = -127;
-            } else if(triple_shot_time > 1000) {
+            } else if(triple_shot_time > 1500) {
                 INT = 0;
                 triple_shot_time = 0;
                 activate_triple_shot = false;
@@ -132,7 +132,7 @@ void Robot::driver_thread(void *ptr) {
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(1600);
+                flywheel.set_velocity(1650);
                 break;
             case 2:
                 flywheel.set_velocity(2500);
@@ -162,9 +162,8 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(1, "Left: %.2f %.2f %.2f", FL.get_actual_velocity(), CL.get_actual_velocity(), BL.get_actual_velocity());
         pros::lcd::print(2, "Right: %.2f %.2f %.2f", FR.get_actual_velocity(), CR.get_actual_velocity(), BR.get_actual_velocity());
         pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f ", FLY.get_temperature(), l_temp, r_temp);
-        pros::lcd::print(4, "FT: %.1f LT: %.1f RT: %.1f ", FLY.get_temperature(), l_temp, r_temp);
-        pros::lcd::print(5, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
-        pros::lcd::print(6, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
+        pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
+        pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
 
 
         pros::delay(5);
