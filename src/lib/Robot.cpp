@@ -132,7 +132,7 @@ void Robot::driver_thread(void *ptr) {
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(1650);
+                flywheel.set_velocity(1750);
                 break;
             case 2:
                 flywheel.set_velocity(2500);
