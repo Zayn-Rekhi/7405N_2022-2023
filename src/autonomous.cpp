@@ -6,8 +6,8 @@ void autonomous() {
     Robot::threading.start("flywheel", Robot::flywheel_thread);
     Robot::threading.start("display", Robot::display_thread);
     Robot::threading.start("controller", Robot::controller_thread);
-    // left_side();
-    right_side();
+    left_side();
+    // right_side();
 }
 
 void skills() {}
@@ -184,7 +184,7 @@ void right_side() {
 void left_side() {
     Robot::INT = 127;
 
-    Robot::flywheel.set_velocity(2200);
+    Robot::flywheel.set_velocity(2300);
 
     Robot::INT = 127;
     Robot::drive.move(-30, 0);
