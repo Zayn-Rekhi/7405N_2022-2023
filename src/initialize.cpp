@@ -4,7 +4,7 @@
 
 
 void initialize() {
-    Robot::EXP.set_value(true);
+    // Robot::EXP.set_value(true);
 
     pros::lcd::initialize();
     pros::delay(100);

@@ -10,7 +10,16 @@ void autonomous() {
     // right_side();
 }
 
-void skills() {}
+void skills() {
+    Robot::flywheel.set_velocity(2200);
+
+    Robot::power.set_value(6.5, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    
+    Robot::drive.move(-30, 0);
+
+    pros::delay(550);
+}
 
 void right_side() {
 
@@ -233,7 +242,7 @@ void left_side() {
 
     Robot::power.set_value(6.5, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(30.3, 27.5), 3, 10000, 50); // 0, -5
+    Robot::drive.move_to(Pose(30.3, 27.5), 3, 10000, 75); // 0, -5
 
     Robot::INT = 127;
 
@@ -243,12 +252,12 @@ void left_side() {
 
     Robot::power.set_value(6.5, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(39.2, 34.0), 3, 10000, 30); // 0, -5
+    Robot::drive.move_to(Pose(39.2, 34.0), 3, 10000, 75); // 0, -5
 
     pros::delay(500);
 
     Robot::turn.set_value(1.3, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(-31, 0.5);
+    Robot::drive.rotate_to(-31.75, 0.5);
 
     pros::delay(250);
 

@@ -25,10 +25,10 @@ pros::Motor Robot::INT(12, true);
 pros::Motor Robot::FLY(6, false);
 
 // Sensors
-pros::IMU Robot::IMU(2);
+pros::IMU Robot::IMU(9);
 
 // Expansion Pistons
-pros::ADIDigitalOut Robot::EXP(3);
+pros::ADIDigitalOut Robot::EXP({{19, 'A'}});
 
 
 /* ========================================================================== */
@@ -64,6 +64,9 @@ void Robot::driver_thread(void *ptr) {
     bool activate_triple_shot = false;
     int triple_shot_time = 0;
 
+    bool activate_single_shot = false;
+    int single_shot_time = 0;
+
     while(true) {
         //Drive
         int power = master.get_analog(ANALOG_LEFT_Y);
@@ -72,18 +75,26 @@ void Robot::driver_thread(void *ptr) {
         if(std::abs(power) < 20) power = 0;
         if(std::abs(turn) < 20) turn = 0;
 
-        drive.move(util::dampen(power), util::dampen(turn));
+        drive.move(power, util::dampen(turn));
 
         //Intake
         bool intake = master.get_digital(DIGITAL_R2);
         bool outtake = master.get_digital(DIGITAL_R1);
 
         bool triple_shot = master.get_digital_new_press(DIGITAL_X);
+        bool single_shot = master.get_digital_new_press(DIGITAL_A);
+
 
         if(triple_shot && !activate_triple_shot) {
             activate_triple_shot = true;
         } else if(triple_shot && activate_triple_shot) {
             activate_triple_shot = false;
+        }
+
+        if(single_shot && !activate_single_shot) {
+            activate_single_shot = true;
+        } else if(single_shot && activate_single_shot) {
+            activate_single_shot = false;
         }
 
         if(activate_triple_shot) {
@@ -93,9 +104,21 @@ void Robot::driver_thread(void *ptr) {
                 INT = 0;
                 triple_shot_time = 0;
                 activate_triple_shot = false;
+            } else if(triple_shot_time > 750) {
+                INT = -127;
             }
 
             triple_shot_time += 5;
+        } else if (activate_single_shot) {
+            if(single_shot_time <= 5) {
+                INT = -127;
+            } else if(single_shot_time > 300) {
+                INT = 0;
+                single_shot_time = 0;
+                activate_single_shot = false;
+            }
+
+            single_shot_time += 5;
         } else {
             if(intake) {
                 INT = 127;
@@ -132,7 +155,7 @@ void Robot::driver_thread(void *ptr) {
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(1750);
+                flywheel.set_velocity(1700);
                 break;
             case 2:
                 flywheel.set_velocity(2500);
@@ -141,13 +164,19 @@ void Robot::driver_thread(void *ptr) {
 
         flywheel.set_mode(flyspeed_mode);
 
-        // Ejector
+        // Expansion
+        bool expand = master.get_digital_new_press(DIGITAL_DOWN);
+
+        if(expand) {
+            EXP.set_value(true);
+        }
 
 
 
         pros::delay(5);
     }
 }
+
 
 void Robot::display_thread(void *ptr) {
     while (true) {
