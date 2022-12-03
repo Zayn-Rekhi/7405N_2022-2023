@@ -52,13 +52,13 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed
 
         if (std::fabs(headingErr) > turnAcc) {
             double turnSpeed = Robot::turn.get_value(headingErr);
-            if (i % 3 == 0) {
-                std::cout << "curPos: " << curPos.toString() << ", target: " << target.toString() << ", ";
-                std::cout << "direction: " << direction << ", moveErr: " << moveErr << ", ";
-                std::cout << "targetHeading: " << util::to_deg(curPos.angleTo(target)) << ", ";
-                std::cout << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed << std::endl;
-            }
-            printf("turning turn move\n");
+            // if (i % 3 == 0) {
+            //     std::cout << "curPos: " << curPos.toString() << ", target: " << target.toString() << ", ";
+            //     std::cout << "direction: " << direction << ", moveErr: " << moveErr << ", ";
+            //     std::cout << "targetHeading: " << util::to_deg(curPos.angleTo(target)) << ", ";
+            //     std::cout << "headingErr: " << headingErr << ", turnSpeed: " << turnSpeed << std::endl;
+            // }
+            // printf("turning turn move\n");
             move(0, turnSpeed);
         } else {
             if (moveErr > moveAcc) {

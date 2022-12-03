@@ -1,16 +1,19 @@
 #pragma once
 
 #include "../controllers/TBH.h"
+#include <atomic>
 #include <cmath>
 
 class FlyWheel{
      private:
-        double target_speed = 0;
-        int settle_count = 0;
-        int mode = 0;
+        std::atomic<int> settle_count = 0;
+        std::atomic<int> mode = 0;
 
      public:
+         std::atomic<double> target_speed;
+
         FlyWheel();
+        static int instances;
 
         double get_velocity();
         void set_velocity(double speed);

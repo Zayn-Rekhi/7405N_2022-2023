@@ -1,4 +1,6 @@
 #include "Robot.h"
+#include "pros/rtos.h"
+#include "subsystems/FlyWheel.h"
 
 // ---------------- lil qiao ---------------- //
 
@@ -6,7 +8,8 @@
 /* ========================================================================== */
 /*                             Robot 🧠🤔                                     */
 /* ========================================================================== */
-
+// bruh
+std::atomic<bool> Robot::auton_done = false;
 // Controller
 pros::Controller Robot::master(pros::E_CONTROLLER_MASTER);
 
@@ -56,6 +59,10 @@ TeamSelection Robot::teamSelection = TeamSelection::UNKNOWN;
 /*                               Threads 🧵🪡                                 */
 /* ========================================================================== */
 void Robot::driver_thread(void *ptr) {
+    while(true){
+    if(!auton_done){
+        pros::delay(5);
+    } else {
     FLY.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     int flyspeed_mode = 0;
@@ -106,6 +113,9 @@ void Robot::driver_thread(void *ptr) {
                 activate_triple_shot = false;
             } else if(triple_shot_time > 750) {
                 INT = -127;
+            }
+            else if (triple_shot_time == 1000) {
+                pros::delay(50);
             }
 
             triple_shot_time += 5;
@@ -162,6 +172,8 @@ void Robot::driver_thread(void *ptr) {
                 break;
         }
 
+        pros::lcd::print(7, "%.2f fwsmode %d", pros::millis(), flyspeed_mode);
+
         flywheel.set_mode(flyspeed_mode);
 
         // Expansion
@@ -171,9 +183,9 @@ void Robot::driver_thread(void *ptr) {
             EXP.set_value(true);
         }
 
-
-
         pros::delay(5);
+    }}
+    pros::delay(5);
     }
 }
 
@@ -193,7 +205,7 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f ", FLY.get_temperature(), l_temp, r_temp);
         pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
-
+        pros::lcd::print(6, "%d", FlyWheel::instances);
 
         pros::delay(5);
     }

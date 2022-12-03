@@ -22,6 +22,7 @@
 
 class Robot {
     public:
+        static std::atomic<bool> auton_done;
         static pros::Controller master;
 
         // Motors
