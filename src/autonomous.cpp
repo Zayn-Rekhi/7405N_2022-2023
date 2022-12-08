@@ -2,8 +2,6 @@
 #include "lib/Robot.h"
 
 void autonomous() {
-
-    // left_side();
     right_side();
 }
 
@@ -17,11 +15,56 @@ void skills() {
 
     pros::delay(550);
 }
-
 void right_side() {
+    Robot::INT = 127;
+    Robot::flywheel.set_velocity(2000);
+    Robot::power.set_value(7.2 , 0.01, 0, 3, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(0.0, 25), 3, 100000, 100);
+
+    pros::delay(250);
+    
+    Robot::turn.set_value(2.3, 0.001, 0.0, 5, 0.0);
+    Robot::drive.rotate_to(26, 1);
+
+    pros::delay(4000);
+
+    Robot::INT = -127;
+    pros::delay(250);
+    Robot::INT = -60;
+
+    pros::delay(2000);
+
+    Robot::turn.set_value(1.6, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-45, 1);
+
+    Robot::power.set_value(6.5, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(29.2, -2), 3, 60);
+
+    pros::delay(250);
+    Robot::turn.set_value(1.8, 0.001, 0.0, 5, 0.0);
+    Robot::drive.rotate_to(0, 0.5);
+
+    pros::delay(250);
+
+    Robot::power.set_value(6.5, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(28.4, -8), 3, 60);
+
+    pros::delay(250);
+
+    Robot::drive.move(-40, 0);
+    Robot::INT = -100;
+    pros::delay(520);
+    Robot::drive.move(40, 0);
+    Robot::INT = 127;
+    pros::delay(220);
+    Robot::drive.move(0, 0);
+}
+void right_sid() {
 
     Robot::flywheel.set_velocity(2200);
-
     Robot::power.set_value(6.5, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
     Robot::drive.move_to(Pose(0.0, -27), 3, 60, 100);
