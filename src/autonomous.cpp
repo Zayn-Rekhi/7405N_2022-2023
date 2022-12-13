@@ -108,7 +108,7 @@ void left_side() {
     pros::delay(250);
 
     Robot::turn.set_value(3, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(-10.5, 0.5);
+    Robot::drive.rotate_to(-9, 0.5);
 
     pros::delay(1500);
 
@@ -142,7 +142,7 @@ void left_side() {
 
      pros::delay(250);
 //
-     Robot::flywheel.set_velocity(2000);
+     Robot::flywheel.set_velocity(1900);
 
      Robot::power.set_value(6.5, 0.01, 0, 2, 10);
      Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
