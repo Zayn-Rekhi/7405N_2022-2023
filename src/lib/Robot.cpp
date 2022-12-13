@@ -17,9 +17,9 @@ pros::Controller Robot::master(pros::E_CONTROLLER_MASTER);
 pros::Motor Robot::FL(10, true);  // Forward Left Drive Wheel
 pros::Motor Robot::CL(16, true);
 pros::Motor Robot::BL(17, true);   // Back Left Drive Wheel
-pros::Motor Robot::FR(3, false);   // Forward Right Drive Wheel
+pros::Motor Robot::FR(7, false);   // Forward Right Drive Wheel
 pros::Motor Robot::CR(5, false);
-pros::Motor Robot::BR(15, false);  // Back Right Drive Wheel
+pros::Motor Robot::BR(20, false);  // Back Right Drive Wheel
 
 // Intake
 pros::Motor Robot::INT(12, true);
@@ -47,7 +47,7 @@ PID Robot::turn(0, 0, 0, 0, 0);
 /*                              Subsystems 🦾🦿                               */
 /* ========================================================================== */
 FlyWheel Robot::flywheel;
-TBH Robot::fly_controller(1);
+TBH Robot::fly_controller(1.75);
 
 /* ========================================================================== */
 /*                               Utility 🔨⛏ 🛠                               */
@@ -79,8 +79,8 @@ void Robot::driver_thread(void *ptr) {
         int power = master.get_analog(ANALOG_LEFT_Y);
         int turn = master.get_analog(ANALOG_RIGHT_X);
 
-        if(std::abs(power) < 20) power = 0;
-        if(std::abs(turn) < 20) turn = 0;
+//        if(std::abs(power) < 20) power = 0;
+//        if(std::abs(turn) < 20) turn = 0;
 
         drive.move(power, util::dampen(turn));
 
@@ -131,11 +131,11 @@ void Robot::driver_thread(void *ptr) {
             single_shot_time += 5;
         } else {
             if(intake) {
-                INT = 127;
+                INT.move_velocity(200);
             } else if (outtake) {
-                INT = -127;
+                INT.move_velocity(-200);
             } else {
-                INT = 0;
+                INT.move_velocity(0);
             }
         }
 
@@ -205,7 +205,6 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f ", FLY.get_temperature(), l_temp, r_temp);
         pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
-        pros::lcd::print(6, "%d", FlyWheel::instances);
 
         pros::delay(5);
     }

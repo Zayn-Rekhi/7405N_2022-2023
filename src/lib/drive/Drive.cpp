@@ -22,7 +22,7 @@ void Drive::move(double power, double turn) {
     Robot::BR = power - turn;
 }
 
-void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed) {
+void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed, int timeout) {
     Pose curPos = Robot::odometry.getPose();
 
 //    double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
@@ -37,6 +37,8 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed
     double moveCompleteBuff = 0;
 
     int i = 0;
+    int time = 0;
+
     while (headingErr > turnAcc || moveCompleteBuff < 5) {
         i++;
         curPos = Robot::odometry.getPose();
@@ -86,6 +88,13 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed
             if(std::abs(moveSpeed) > maxspeed) {moveSpeed = moveSpeed < 0 ? -maxspeed : maxspeed; }
             move(moveSpeed * direction, turnSpeed);
         }
+
+        if(time > timeout) { //break out of that motherfucker
+            break;
+        }
+
+        time += 5;
+        pros::delay(5);
     }
 
     printf("done");
