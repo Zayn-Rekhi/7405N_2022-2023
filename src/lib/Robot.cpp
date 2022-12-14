@@ -32,6 +32,8 @@ pros::IMU Robot::IMU(9);
 
 // Expansion Pistons
 pros::ADIDigitalOut Robot::EXP({{19, 'A'}});
+pros::ADIDigitalOut Robot::AC({{19, 'A'}});
+
 
 
 /* ========================================================================== */
@@ -73,6 +75,8 @@ void Robot::driver_thread(void *ptr) {
 
     bool activate_single_shot = false;
     int single_shot_time = 0;
+
+    bool activate_angle_change = false;
 
     while(true) {
         //Drive
@@ -182,6 +186,19 @@ void Robot::driver_thread(void *ptr) {
         if(expand) {
             EXP.set_value(true);
         }
+
+        //Angle Change
+        bool angle_change = master.get_digital_new_press(DIGITAL_RIGHT);
+
+        if(angle_change && !activate_angle_change) {
+            AC.set_value(true);
+            activate_angle_change = true;
+        } else if(angle_change && activate_angle_change) {
+            AC.set_value(false);
+            activate_angle_change = false;
+        }
+
+
 
         pros::delay(5);
     }}

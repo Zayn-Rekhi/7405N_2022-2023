@@ -45,8 +45,9 @@ class Robot {
 
         // Flywheel Piston
         static pros::ADIDigitalOut EXP;
+        static pros::ADIDigitalOut AC;
 
-        // Drive
+    // Drive
         static Drive drive;
         static Odometry odometry;
         static PID power;
