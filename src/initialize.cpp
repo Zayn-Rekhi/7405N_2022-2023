@@ -3,7 +3,8 @@
 #define IMUDELAYTIME 5000
 
 
-void initialize() {
+void initialize() { 
+    Robot::AC.set_value(true);
     pros::lcd::initialize();
 
     pros::delay(100);

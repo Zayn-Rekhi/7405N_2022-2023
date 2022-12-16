@@ -11,7 +11,7 @@ class FlyWheel{
         std::atomic<int> mode = 0;
 
         std::deque<double> bufferVel;
-        int bufferVelSize = 20;
+        int bufferVelSize = 10;
 
      public:
          std::atomic<double> target_speed;

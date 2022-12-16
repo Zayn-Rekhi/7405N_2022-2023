@@ -32,7 +32,7 @@ pros::IMU Robot::IMU(9);
 
 // Expansion Pistons
 pros::ADIDigitalOut Robot::EXP({{19, 'A'}});
-pros::ADIDigitalOut Robot::AC({{19, 'A'}});
+pros::ADIDigitalOut Robot::AC({{19, 'C'}});
 
 
 
@@ -169,7 +169,7 @@ void Robot::driver_thread(void *ptr) {
                 flywheel.set_velocity(0); //try setting the velocity just once
                 break;
             case 1:
-                flywheel.set_velocity(1700);
+                flywheel.set_velocity(1600);
                 break;
             case 2:
                 flywheel.set_velocity(2500);
@@ -188,17 +188,15 @@ void Robot::driver_thread(void *ptr) {
         }
 
         //Angle Change
-        bool angle_change = master.get_digital_new_press(DIGITAL_RIGHT);
+        bool angle_change = master.get_digital_new_press(DIGITAL_Y);
 
         if(angle_change && !activate_angle_change) {
-            AC.set_value(true);
+            AC.set_value(false);
             activate_angle_change = true;
         } else if(angle_change && activate_angle_change) {
-            AC.set_value(false);
+            AC.set_value(true);
             activate_angle_change = false;
         }
-
-
 
         pros::delay(5);
     }}
@@ -219,7 +217,7 @@ void Robot::display_thread(void *ptr) {
 
         pros::lcd::print(1, "Left: %.2f %.2f %.2f", FL.get_actual_velocity(), CL.get_actual_velocity(), BL.get_actual_velocity());
         pros::lcd::print(2, "Right: %.2f %.2f %.2f", FR.get_actual_velocity(), CR.get_actual_velocity(), BR.get_actual_velocity());
-        pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f ", FLY.get_temperature(), l_temp, r_temp);
+        pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f IT: %.1f ", FLY.get_temperature(), l_temp, r_temp, INT.get_temperature());
         pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
 
