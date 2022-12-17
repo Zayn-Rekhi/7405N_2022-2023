@@ -69,6 +69,7 @@ void Robot::driver_thread(void *ptr) {
 
     int flyspeed_mode = 0;
     bool flyspeed_change = false;
+    double flyspeed = 0;
 
     bool activate_triple_shot = false;
     int triple_shot_time = 0;
@@ -135,11 +136,11 @@ void Robot::driver_thread(void *ptr) {
             single_shot_time += 5;
         } else {
             if(intake) {
-                INT.move_velocity(200);
+                INT = 127;
             } else if (outtake) {
-                INT.move_velocity(-200);
+                INT = -127;
             } else {
-                INT.move_velocity(0);
+                INT = 0;
             }
         }
 
@@ -164,17 +165,6 @@ void Robot::driver_thread(void *ptr) {
             flyspeed_change = false;
         }
 
-        switch(flyspeed_mode) {
-            case 0:
-                flywheel.set_velocity(0); //try setting the velocity just once
-                break;
-            case 1:
-                flywheel.set_velocity(1600);
-                break;
-            case 2:
-                flywheel.set_velocity(2500);
-                break;
-        }
 
         pros::lcd::print(7, "%.2f fwsmode %d", pros::millis(), flyspeed_mode);
 
@@ -198,6 +188,23 @@ void Robot::driver_thread(void *ptr) {
             activate_angle_change = false;
         }
 
+        switch(flyspeed_mode) {
+            case 0:
+                flyspeed = 0; //try setting the velocity just once
+                break;
+            case 1:
+                flyspeed = 1600;
+                break;
+            case 2:
+                flyspeed = 2500;
+                break;
+        }
+
+        if(activate_angle_change) {
+            flyspeed = 1800;
+        }
+
+        flywheel.set_velocity(flyspeed);
         pros::delay(5);
     }}
     pros::delay(5);
