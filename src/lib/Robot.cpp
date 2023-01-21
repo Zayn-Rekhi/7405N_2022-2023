@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "pros/motors.h"
 #include "pros/rtos.h"
 #include "subsystems/FlyWheel.h"
 
@@ -15,17 +16,17 @@ pros::Controller Robot::master(pros::E_CONTROLLER_MASTER);
 
 // Motors
 pros::Motor Robot::FL(10, true);  // Forward Left Drive Wheel
-pros::Motor Robot::CL(16, true);
-pros::Motor Robot::BL(17, true);   // Back Left Drive Wheel
+pros::Motor Robot::CL(16, true); //
+pros::Motor Robot::BL(17, true); //  // Back Left Drive Wheel
 pros::Motor Robot::FR(7, false);   // Forward Right Drive Wheel
-pros::Motor Robot::CR(5, false);
-pros::Motor Robot::BR(20, false);  // Back Right Drive Wheel
+pros::Motor Robot::CR(5, false); //
+pros::Motor Robot::BR(20, false); // // Back Right Drive Wheel
 
 // Intake
-pros::Motor Robot::INT(12, true);
+pros::Motor Robot::INT(12, true); //
 
 // Flywheel
-pros::Motor Robot::FLY(6, false);
+pros::Motor Robot::FLY(8, false);
 
 // Sensors
 pros::IMU Robot::IMU(9);
@@ -62,152 +63,171 @@ TeamSelection Robot::teamSelection = TeamSelection::UNKNOWN;
 /* ========================================================================== */
 void Robot::driver_thread(void *ptr) {
     while(true){
-    if(!auton_done){
-        pros::delay(5);
-    } else {
-    FLY.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        if(!auton_done){
+            pros::delay(5);
+        } else {
+            FLY.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
-    int flyspeed_mode = 0;
-    bool flyspeed_change = false;
-    double flyspeed = 0;
+            int flyspeed_mode = 0;
+            bool flyspeed_change = false;
+            double flyspeed = 0;
 
-    bool activate_triple_shot = false;
-    int triple_shot_time = 0;
+            bool activate_triple_shot = false;
+            int triple_shot_time = 0;
+            int numShots = 0;
+            int shot_time_start = 0;
 
-    bool activate_single_shot = false;
-    int single_shot_time = 0;
+            bool activate_single_shot = false;
+            int single_shot_time = 0;
 
-    bool activate_angle_change = false;
+            bool activate_angle_change = false;
 
-    while(true) {
-        //Drive
-        int power = master.get_analog(ANALOG_LEFT_Y);
-        int turn = master.get_analog(ANALOG_RIGHT_X);
+            INT.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
+            while(true) {
+                //Drive
+                int power = master.get_analog(ANALOG_LEFT_Y);
+                int turn = master.get_analog(ANALOG_RIGHT_X);
 
 //        if(std::abs(power) < 20) power = 0;
 //        if(std::abs(turn) < 20) turn = 0;
 
-        drive.move(power, util::dampen(turn));
+                drive.move(power, util::dampen(turn));
 
-        //Intake
-        bool intake = master.get_digital(DIGITAL_R2);
-        bool outtake = master.get_digital(DIGITAL_R1);
+                //Intake
+                bool intake = master.get_digital(DIGITAL_R2);
+                bool outtake = master.get_digital(DIGITAL_R1);
 
-        bool triple_shot = master.get_digital_new_press(DIGITAL_X);
-        bool single_shot = master.get_digital_new_press(DIGITAL_A);
-
-
-        if(triple_shot && !activate_triple_shot) {
-            activate_triple_shot = true;
-        } else if(triple_shot && activate_triple_shot) {
-            activate_triple_shot = false;
-        }
-
-        if(single_shot && !activate_single_shot) {
-            activate_single_shot = true;
-        } else if(single_shot && activate_single_shot) {
-            activate_single_shot = false;
-        }
-
-        if(activate_triple_shot) {
-            if(triple_shot_time <= 5) {
-                INT = -127;
-            } else if(triple_shot_time > 1500) {
-                INT = 0;
-                triple_shot_time = 0;
-                activate_triple_shot = false;
-            } else if(triple_shot_time > 750) {
-                INT = -127;
-            }
-            else if (triple_shot_time == 1000) {
-                pros::delay(50);
-            }
-
-            triple_shot_time += 5;
-        } else if (activate_single_shot) {
-            if(single_shot_time <= 5) {
-                INT = -127;
-            } else if(single_shot_time > 300) {
-                INT = 0;
-                single_shot_time = 0;
-                activate_single_shot = false;
-            }
-
-            single_shot_time += 5;
-        } else {
-            if(intake) {
-                INT = 127;
-            } else if (outtake) {
-                INT = -127;
-            } else {
-                INT = 0;
-            }
-        }
+                bool triple_shot = master.get_digital_new_press(DIGITAL_A);
+                bool single_shot = master.get_digital_new_press(DIGITAL_X);
 
 
-        bool shoot_inc = master.get_digital_new_press(DIGITAL_L1);
-        bool shoot_dec = master.get_digital_new_press(DIGITAL_L2);
+                if(triple_shot && !activate_triple_shot) {
+                    activate_triple_shot = true;
+                } else if(triple_shot && activate_triple_shot) {
+                    activate_triple_shot = false;
+                }
 
-        if(shoot_inc && flyspeed_mode < 2) {
-            flyspeed_mode++;
-            fly_controller.reset();
-            flyspeed_change = true;
-        }
+                if(single_shot && !activate_single_shot) {
+                    activate_single_shot = true;
+                } else if(single_shot && activate_single_shot) {
+                    activate_single_shot = false;
+                }
 
-        if (shoot_dec && flyspeed_mode > 0) {
-            flyspeed_mode--;
-            fly_controller.reset();
-            flyspeed_change = true;
-        }
+                if (intake || outtake) {
+                    activate_triple_shot = false;
+                    activate_single_shot = false;
+                    numShots = 0;
+                    triple_shot_time = 0;
+                    single_shot_time = 0;
+                }
 
-        if(flyspeed_change) {
-            master.rumble("___");
-            flyspeed_change = false;
-        }
+                if(activate_triple_shot) {
+                    printf("Flyspeed: %f A: %f\n", flyspeed, FLY.get_actual_velocity());
+                    bool shoot = false;
+                    if (fabs(flywheel.get_velocity()) > fabs((0.85 * flyspeed))) {
+                        INT = -127;
+                        shoot = true;
+                        if (pros::millis() - shot_time_start > 500) {
+                            ++numShots;
+                            shot_time_start = pros::millis();
+                        }
+                    }
+
+                    if (numShots > 3 || triple_shot_time > 2500) {
+                        INT = 0;
+                        activate_triple_shot = false;
+                        numShots = 0;
+                        triple_shot_time = 0;
+                    } else if (!shoot) {
+                        INT = 0;
+                    }
+
+                    triple_shot_time += 5;
+                } else if (activate_single_shot) {
+                    if(single_shot_time <= 5) {
+                        INT = -127;
+                    } else if(single_shot_time > 300) {
+                        INT = 0;
+                        single_shot_time = 0;
+                        activate_single_shot = false;
+                    }
+
+                    single_shot_time += 5;
+                } else {
+                    if(intake) {
+                        INT = 127;
+                    } else if (outtake) {
+                        INT = -127;
+                    } else {
+                        INT = 0;
+                    }
+                }
 
 
-        pros::lcd::print(7, "%.2f fwsmode %d", pros::millis(), flyspeed_mode);
+                bool shoot_inc = master.get_digital_new_press(DIGITAL_L1);
+                bool shoot_dec = master.get_digital_new_press(DIGITAL_L2);
 
-        flywheel.set_mode(flyspeed_mode);
+                if(shoot_inc && flyspeed_mode < 2) {
+                    flyspeed_mode++;
+                    fly_controller.reset();
+                    flyspeed_change = true;
+                }
 
-        // Expansion
-        bool expand = master.get_digital_new_press(DIGITAL_DOWN);
+                if (shoot_dec && flyspeed_mode > 0) {
+                    flyspeed_mode--;
+                    fly_controller.reset();
+                    flyspeed_change = true;
+                }
 
-        if(expand) {
-            EXP.set_value(true);
-        }
+                if(flyspeed_change) {
+                    master.rumble("___");
+                    flyspeed_change = false;
+                }
 
-        //Angle Change
-        bool angle_change = master.get_digital_new_press(DIGITAL_Y);
 
-        if(angle_change && !activate_angle_change) {
-            AC.set_value(false);
-            activate_angle_change = true;
-        } else if(angle_change && activate_angle_change) {
-            AC.set_value(true);
-            activate_angle_change = false;
-        }
+                pros::lcd::print(7, "%.2f fwsmode %d", pros::millis(), flyspeed_mode);
 
-        switch(flyspeed_mode) {
-            case 0:
-                flyspeed = 0; //try setting the velocity just once
-                break;
-            case 1:
-                flyspeed = 1600;
-                break;
-            case 2:
-                flyspeed = 2500;
-                break;
-        }
+                flywheel.set_mode(flyspeed_mode);
 
-        if(activate_angle_change) {
-            flyspeed = 1800;
-        }
+                // Expansion
+                bool expand = master.get_digital_new_press(DIGITAL_DOWN);
 
-        flywheel.set_velocity(flyspeed);
+                if(expand) {
+                    EXP.set_value(true);
+                }
+
+                //Angle Change
+                bool angle_change = master.get_digital_new_press(DIGITAL_B);
+
+                if(angle_change && !activate_angle_change) {
+                    AC.set_value(false);
+                    activate_angle_change = true;
+                } else if(angle_change && activate_angle_change) {
+                    AC.set_value(true);
+                    activate_angle_change = false;
+                }
+
+                switch(flyspeed_mode) {
+                    case 0:
+                        flyspeed = 0; //try setting the velocity just once
+                        break;
+                    case 1:
+                        flyspeed = 1600;
+                        break;
+                    case 2:
+                        flyspeed = 2500;
+                        break;
+                }
+
+                if(activate_angle_change && flyspeed_mode) {
+                    flyspeed = 1650;
+                }
+
+                flywheel.set_velocity(flyspeed);
+                pros::delay(5);
+            }}
         pros::delay(5);
-    }}
-    pros::delay(5);
     }
 }
 
@@ -227,6 +247,8 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f IT: %.1f ", FLY.get_temperature(), l_temp, r_temp, INT.get_temperature());
         pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
+
+        printf("%.2f \n", Robot::FLY.get_actual_velocity() * 15);
 
         pros::delay(5);
     }
