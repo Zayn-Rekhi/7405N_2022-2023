@@ -26,7 +26,7 @@ pros::Motor Robot::BR(20, false); // // Back Right Drive Wheel
 pros::Motor Robot::INT(12, true); //
 
 // Flywheel
-pros::Motor Robot::FLY(8, false);
+pros::Motor Robot::FLY(6, false);
 
 // Sensors
 pros::IMU Robot::IMU(9);
@@ -134,7 +134,7 @@ void Robot::driver_thread(void *ptr) {
                         }
                     }
 
-                    if (numShots > 3 || triple_shot_time > 2500) {
+                    if (triple_shot_time > 2500) {
                         INT = 0;
                         activate_triple_shot = false;
                         numShots = 0;

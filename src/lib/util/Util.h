@@ -24,8 +24,8 @@ namespace util {
     }
 
     static int dampen(int input) {
-        double s = 100;
-        double a = .50;
+        double s = 40;
+        double a = .60;
         double v = (127*a-127)/(-s*s+254*s-16129);
         double c = a - 2*v*s;
         double output;

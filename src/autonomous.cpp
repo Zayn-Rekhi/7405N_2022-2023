@@ -4,8 +4,8 @@
 void autonomous() {
 //    Robot::flywheel.set_velocity(2200);
 //    Robot::FLY.move_velocity(240);
-//    left_side();
-     right_side();
+    left_side();
+//     right_side();
 //    skills();
 //awp();
 //    pros::delay(2000);
@@ -177,7 +177,7 @@ void right_side() {
 
 void left_side() {
 
-    Robot::flywheel.set_velocity(1825);
+    Robot::flywheel.set_velocity(1925);
 
     Robot::drive.move(-40, 0);
     Robot::INT = 100;
@@ -209,25 +209,29 @@ void left_side() {
     pros::delay(250);
 
     Robot::turn.set_value(3, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(-11.25, 0.5);
+    Robot::drive.rotate_to(-12.25, 0.5);
 
     pros::delay(2000);
     Robot::INT = -127;
     pros::delay(400);
     Robot::INT = 0;
+    Robot::flywheel.set_velocity(2300);
     pros::delay(500);
 
     Robot::INT = -127;
-    pros::delay(600);
+    pros::delay(400);
     Robot::INT = 0;
+    Robot::flywheel.set_velocity(2300);
     pros::delay(500);
 
     Robot::INT = -127;
-    pros::delay(600);
+    pros::delay(400);
     Robot::INT = 0;
     pros::delay(500);
 
-     Robot::turn.set_value(1.5, 0.001, 0.0, 6, 0.0);
+    Robot::flywheel.set_velocity(1700);
+
+    Robot::turn.set_value(1.5, 0.001, 0.0, 6, 0.0);
      Robot::drive.rotate_to(49.5, 0.5);
 
       pros::delay(250);
@@ -241,7 +245,6 @@ void left_side() {
       Robot::INT = 127;
 
  //
-      Robot::flywheel.set_velocity(1600);
 
      //  Robot::power.set_value(6.5, 0.01, 0, 2, 10);
      //  Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
@@ -250,12 +253,12 @@ void left_side() {
 
      Robot::power.set_value(6.5, 0.01, 0, 2, 10);
      Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-     Robot::drive.move_to(Pose(46.2, 40.8), 3, 10000, 50); // 0, -5
+     Robot::drive.move_to(Pose(46.2, 40.8), 3, 10000, 40); // 0, -5
 
       pros::delay(1000);
 
       Robot::turn.set_value(1.3, 0.001, 0.0, 6, 0.0);
-      Robot::drive.rotate_to(-36.5, 0.5);
+      Robot::drive.rotate_to(-34.5, 0.5);
 
      pros::delay(1000);
 
@@ -264,12 +267,18 @@ void left_side() {
      Robot::INT = 0;
      pros::delay(300);
 
-     Robot::INT = -127;
+     Robot::flywheel.set_velocity(2300);
+
+
+    Robot::INT = -127;
      pros::delay(400);
      Robot::INT = 0;
      pros::delay(300);
 
-     Robot::INT = -127;
+    Robot::flywheel.set_velocity(2300);
+
+
+    Robot::INT = -127;
      pros::delay(400);
      Robot::INT = 0;
      pros::delay(300);
