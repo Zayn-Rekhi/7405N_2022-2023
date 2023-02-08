@@ -221,7 +221,7 @@ void Robot::driver_thread(void *ptr) {
                 }
 
                 if(activate_angle_change && flyspeed_mode) {
-                    flyspeed = 1650;
+                    flyspeed = 1600;
                 }
 
                 flywheel.set_velocity(flyspeed);

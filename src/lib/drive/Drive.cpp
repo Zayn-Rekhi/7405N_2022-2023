@@ -106,7 +106,7 @@ void Drive::move_to(Pose target, double moveAcc, double turnAcc, double maxspeed
 
 }
 
-void Drive::rotate_to(double targetHeading, double turnAcc) {
+void Drive::rotate_to(double targetHeading, double turnAcc, double maxSpeed) {
     Pose curPos = Robot::odometry.getPose();
     double curPosHeading = std::fmod(curPos.theta, 180.0) - 180.0 * std::round(curPos.theta / (360.0));
     double headingErr = targetHeading - curPosHeading;
@@ -135,6 +135,8 @@ void Drive::rotate_to(double targetHeading, double turnAcc) {
                       << std::endl;
             printf("turning turn function\n");
         }
+
+        if(std::abs(turnSpeed) > maxspeed) {turnSpeed = turnSpeed < 0 ? -maxSpeed : maxSpeed; }
 
         move(0, turnSpeed);
     }

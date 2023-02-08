@@ -14,5 +14,5 @@ class Drive {
 
         void move(double power, double turn);
         void move_to(Pose target, double moveAcc, double turnAcc, double maxspeed = 127, int timeout= 5000);
-        void rotate_to(double targetHeading, double turnAcc);
+        void rotate_to(double targetHeading, double turnAcc, double maxSpeed = 127);
 };
