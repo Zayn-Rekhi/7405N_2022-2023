@@ -136,7 +136,7 @@ void Drive::rotate_to(double targetHeading, double turnAcc, double maxSpeed) {
             printf("turning turn function\n");
         }
 
-        if(std::abs(turnSpeed) > maxspeed) {turnSpeed = turnSpeed < 0 ? -maxSpeed : maxSpeed; }
+        if(std::abs(turnSpeed) > maxSpeed) {turnSpeed = turnSpeed < 0 ? -maxSpeed : maxSpeed; }
 
         move(0, turnSpeed);
     }

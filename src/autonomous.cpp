@@ -5,8 +5,8 @@ void autonomous() {
 //    Robot::flywheel.set_velocity(2200);
 //    Robot::FLY.move_velocity(240);
 //    left_side();
-     right_side();
-//    skills();
+//     right_side();
+    skills();
 //awp();
 //    pros::delay(2000);
 //
@@ -62,25 +62,25 @@ void skills() {
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
     Robot::drive.move_to(Pose(-18, 21), 3, 10000); // 0, -5
 
-    pros::delay(500);
+    pros::delay(250);
 
-    Robot::turn.set_value(1.1, 0.0008, 0.0, 6, 0.0);
+    Robot::turn.set_value(1.3, 0.0008, 0.0, 6, 0.0);
     Robot::drive.rotate_to(1.5, 0.5);
 
-    Robot::flywheel.set_velocity(1500);
+    Robot::flywheel.set_velocity(1450);
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(-19, 77), 3, 10000, 60); // 0, -5
+    Robot::drive.move_to(Pose(-19, 77), 3, 10000, 80); // 0, -5
 
     pros::delay(100);
 
     Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(3, 0.5);
+    Robot::drive.rotate_to(6.5, 0.5);
 
-    pros::delay(1000);
+    pros::delay(250);
 
     Robot::INT = -127;
     pros::delay(400);
@@ -99,34 +99,34 @@ void skills() {
 
     pros::delay(500);
 
-    Robot::turn.set_value(1, 0.0008, 0.0, 6, 0.0);
+    Robot::turn.set_value(3, 0.0008, 0.0, 6, 0.0);
     Robot::drive.rotate_to(0, 0.5);
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(-18, 34), 5, 2000, 127, 2000); // 0, -5
+    Robot::drive.move_to(Pose(-18, 34), 5, 2000, 80, 2000); // 0, -5
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::turn.set_value(1.5, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(45, 0.5);
+    Robot::drive.rotate_to(46, 0.5);
 
     Robot::INT = 127;
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(27, 73.5), 3, 10000, 40); // 0, -5
+    Robot::drive.move_to(Pose(27, 73.5), 3, 10000, 80); // 0, -5
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::turn.set_value(1.2, 0.001, 0.0, 6, 0.0);
     Robot::drive.rotate_to(-41.5, 0.5);
 
-    pros::delay(1000);
+    pros::delay(250);
 
     Robot::INT = -127;
     pros::delay(400);
@@ -143,14 +143,14 @@ void skills() {
     Robot::INT = 0;
     pros::delay(600);
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::turn.set_value(1.2, 0.001, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(41, 0.5);
+    Robot::drive.rotate_to(43, 0.5);
 
     Robot::INT = 127;
 
-    pros::delay(500);
+    pros::delay(250);
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
@@ -160,20 +160,132 @@ void skills() {
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(69.4, 118.3), 3, 10000, 40, 2800); // 0, -5
+    Robot::drive.move_to(Pose(69.4, 118.3), 3, 10000, 80, 2800); // 0, -5
+
+    pros::delay(250);
+
+    Robot::turn.set_value(1.05, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-92, 0.5);
+
+    pros::delay(250);
+
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(29.6, 118.9), 3, 10000, 80, 2800); // 0, -5
+
+    pros::delay(250);
+
+
+    Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-94, 0.5);
+
+    pros::delay(250);
+
+
+    Robot::INT = -127;
+    pros::delay(400);
+    Robot::INT = 0;
+    pros::delay(600);
+
+    Robot::INT = -127;
+    pros::delay(400);
+    Robot::INT = 0;
+    pros::delay(600);
+
+    Robot::INT = -127;
+    pros::delay(400);
+    Robot::INT = 0;
+    pros::delay(600);
 
     pros::delay(500);
 
-    Robot::turn.set_value(1.05, 0.001, 0.0, 6, 0.0);
+    Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
     Robot::drive.rotate_to(-92, 0.5);
 
     pros::delay(500);
 
     Robot::power.set_value(7.2, 0.01, 0, 2, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(27.6, 118.9), 3, 10000, 60, 2800); // 0, -5
+    Robot::drive.move_to(Pose(83.6, 117.88), 3, 10000, 80, 2500); // 0, -5
 
-    pros::delay(1000);
+    pros::delay(250);
+
+    Robot::turn.set_value(1.2, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-180, 0.5);
+
+    pros::delay(250);
+
+    Robot::drive.move(-40, 0);
+    Robot::INT = 100;
+
+    pros::delay(450);
+    Robot::INT = 127;
+    pros::delay(650);
+
+    Robot::drive.move(40, 0);
+    pros::delay(650);
+    Robot::drive.move(0, 0);
+
+    Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-172.6, 0.5);
+
+    pros::delay(250);
+
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(78.2, 106.3), 3, 10000, 90, 1400); // 0, -5
+
+    pros::delay(250);
+
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(72.67, 87.6), 3, 10000, 80, 2800); // 0, -5
+
+    pros::delay(250);
+
+    Robot::turn.set_value(1.7, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-128, 0.5);
+
+    pros::delay(250);
+
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(98.9, 106.5), 3, 10000, 80, 2800); // 0, -5
+
+    pros::delay(250);
+
+    Robot::turn.set_value(1.7, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-90, 0.5);
+
+    pros::delay(250);
+
+    Robot::drive.move(-40, 0);
+    Robot::INT = 100;
+
+    pros::delay(450);
+    Robot::INT = 127;
+    pros::delay(450);
+
+    Robot::drive.move(40, 0);
+    pros::delay(350);
+    Robot::drive.move(0, 0);
+
+    pros::delay(250);
+
+    Robot::turn.set_value(1.25, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-180, 0.5);
+
+    pros::delay(250);
+
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(104.2, 50.6), 3, 10000, 80, 2300); // 0, -5
+
+    Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-174, 0.5);
+
+    pros::delay(250);
+
 
     Robot::INT = -127;
     pros::delay(400);
@@ -192,21 +304,39 @@ void skills() {
 
     pros::delay(500);
 
-    Robot::drive.move_to(Pose(91.24, 119.33), 7, 10000, 127, 3000); // 0, -5
+    Robot::turn.set_value(5, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-180, 0.5);
 
-    pros::delay(500);
+    pros::delay(250);
 
-    Robot::turn.set_value(1.5, 0.002, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(-145, 5);
+    Robot::power.set_value(7.2, 0.01, 0, 2, 10);
+    Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
+    Robot::drive.move_to(Pose(99.4, 116.5), 3, 10000, 127, 2200); // 0, -5
 
-    pros::delay(500);
+    pros::delay(250);
+
+    Robot::turn.set_value(1.5, 0.001, 0.0, 6, 0.0);
+    Robot::drive.rotate_to(-135, 0.5);
+
     Robot::EXP.set_value(true);
+
+
+//
+//    Robot::drive.move_to(Pose(91.24, 119.33), 7, 10000, 127, 3000); // 0, -5
+//
+//    pros::delay(500);
+//
+//    Robot::turn.set_value(1.5, 0.002, 0.0, 6, 0.0);
+//    Robot::drive.rotate_to(-145, 5);
+//
+//    pros::delay(500);
+//    Robot::EXP.set_value(true);
 
 }
 
 void right_side() {
 
-    Robot::flywheel.set_velocity(1900);
+    Robot::flywheel.set_velocity(1815);
     Robot::power.set_value(7.2 , 0.01, 0, 3, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
     Robot::drive.move_to(Pose(0.0, -20), 3, 100000, 100);
@@ -224,7 +354,7 @@ void right_side() {
     pros::delay(650);
     Robot::INT = 127;
 
-    Robot::drive.move_to(Pose(10, -20), 3, 100000, 100);
+    Robot::drive.move_to(Pose(8, -20), 3, 100000, 100);
 
     pros::delay(250);
 
@@ -242,14 +372,16 @@ void right_side() {
     Robot::INT = -127;
     pros::delay(400);
     Robot::INT = 0;
-    Robot::flywheel.set_velocity(2300);
     pros::delay(500);
 
 
     Robot::INT = 127;
     pros::delay(500);
 
-    Robot::turn.set_value(1.25, 0.0008, 0.0, 6, 0.0);
+    Robot::flywheel.set_velocity(1650);
+
+
+    Robot::turn.set_value(1.35, 0.0008, 0.0, 6, 0.0);
     Robot::drive.rotate_to(28, 0.5);
 
     pros::delay(500);
@@ -260,35 +392,39 @@ void right_side() {
 
     pros::delay(500);
 
-    Robot::turn.set_value(2.5, 0.0008, 0.0, 6, 0.0);
+    Robot::turn.set_value(2.8, 0.0008, 0.0, 6, 0.0);
     Robot::drive.rotate_to(48, 0.5);
 
     pros::delay(500);
 
     Robot::power.set_value(7.2 , 0.01, 0, 3, 10);
     Robot::turn.set_value(0, 0, 0.0, 0, 0.0);
-    Robot::drive.move_to(Pose(50, 32), 3, 100000, 30);
+    Robot::drive.move_to(Pose(50, 32), 3, 100000, 90);
 
     pros::delay(500);
 
     Robot::turn.set_value(1.25, 0.0008, 0.0, 6, 0.0);
-    Robot::drive.rotate_to(134, 0.5);
+    Robot::drive.rotate_to(139, 0.5);
+
 
     pros::delay(1000);
 
     Robot::INT = -127;
     pros::delay(400);
     Robot::INT = 0;
+    Robot::flywheel.set_velocity(2300);
     pros::delay(600);
 
     Robot::INT = -127;
     pros::delay(400);
     Robot::INT = 0;
+    Robot::flywheel.set_velocity(2300);
     pros::delay(600);
 
     Robot::INT = -127;
     pros::delay(400);
     Robot::INT = 0;
+    Robot::flywheel.set_velocity(2300);
     pros::delay(600);
 
 
