@@ -50,7 +50,7 @@ PID Robot::turn(0, 0, 0, 0, 0);
 /*                              Subsystems 🦾🦿                               */
 /* ========================================================================== */
 FlyWheel Robot::flywheel;
-TBH Robot::fly_controller(1.75);
+TBH Robot::fly_controller(2);
 
 /* ========================================================================== */
 /*                               Utility 🔨⛏ 🛠                               */
@@ -123,7 +123,6 @@ void Robot::driver_thread(void *ptr) {
                 }
 
                 if(activate_triple_shot) {
-                    printf("Flyspeed: %f A: %f\n", flyspeed, FLY.get_actual_velocity());
                     bool shoot = false;
                     if (fabs(flywheel.get_velocity()) > fabs((0.85 * flyspeed))) {
                         INT = -127;
@@ -213,7 +212,7 @@ void Robot::driver_thread(void *ptr) {
                         flyspeed = 0; //try setting the velocity just once
                         break;
                     case 1:
-                        flyspeed = 1500;
+                        flyspeed = 1550;
                         break;
                     case 2:
                         flyspeed = 2500;
@@ -247,8 +246,6 @@ void Robot::display_thread(void *ptr) {
         pros::lcd::print(3, "FT: %.1f LT: %.1f RT: %.1f IT: %.1f ", FLY.get_temperature(), l_temp, r_temp, INT.get_temperature());
         pros::lcd::print(4, "X=%.2f, Y=%.2f, A=%.2f", cur.x, cur.y, cur.theta);
         pros::lcd::print(5, "%.2f %.2f %.2f %.2f", FL.get_position(), FR.get_position(), CL.get_position(), CR.get_position());
-
-        printf("%.2f \n", Robot::FLY.get_actual_velocity() * 15);
 
         pros::delay(5);
     }
