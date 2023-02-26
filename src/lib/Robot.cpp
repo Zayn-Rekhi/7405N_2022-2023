@@ -28,6 +28,7 @@ pros::Motor Robot::INT(12, true); //
 // Flywheel
 pros::Motor Robot::FLY(6, false);
 
+
 // Sensors
 pros::IMU Robot::IMU(9);
 
@@ -50,7 +51,7 @@ PID Robot::turn(0, 0, 0, 0, 0);
 /*                              Subsystems 🦾🦿                               */
 /* ========================================================================== */
 FlyWheel Robot::flywheel;
-TBH Robot::fly_controller(2);
+TBH Robot::fly_controller(0.5);
 
 /* ========================================================================== */
 /*                               Utility 🔨⛏ 🛠                               */
@@ -212,15 +213,15 @@ void Robot::driver_thread(void *ptr) {
                         flyspeed = 0; //try setting the velocity just once
                         break;
                     case 1:
-                        flyspeed = 1550;
+                        flyspeed = 1600;
                         break;
                     case 2:
-                        flyspeed = 2500;
+                        flyspeed = 2000;
                         break;
                 }
 
                 if(activate_angle_change && flyspeed_mode) {
-                    flyspeed = 1500;
+                    flyspeed = 1550;
                 }
 
                 flywheel.set_velocity(flyspeed);

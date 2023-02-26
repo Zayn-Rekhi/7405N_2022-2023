@@ -27,10 +27,23 @@ double FlyWheel::get_velocity() {
 void FlyWheel::update() {
     double error = target_speed.load() - get_velocity();
     double vel = Robot::fly_controller.get_value(error);
-    printf("Error: %.2f Vel: %.2f \n", error, vel);
+    printf("Error: %.2f Vel: %.2f Reached Target: %d \n", error, vel, reached_target(5));
 
-//    if (std::abs(error) < 300) {
-//        vel = 0.001 * vel;
-//    }
+
     Robot::FLY.move_voltage(vel);
+}
+
+bool FlyWheel::reached_target(double threshold) {
+    int reached_target_count = 0;
+    for (int i = 0; i < bufferVelSize; i++) {
+        if(std::abs(target_speed.load() - get_velocity()) < threshold) {
+            reached_target_count++;
+        }
+    }
+
+    if(reached_target_count / bufferVelSize == 1) {
+        return true;
+    }
+
+    return false;
 }
