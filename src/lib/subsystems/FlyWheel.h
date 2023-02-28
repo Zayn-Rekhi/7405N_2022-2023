@@ -20,9 +20,11 @@ class FlyWheel{
 
         double get_velocity();
         void set_velocity(double speed);
+        bool reached_target(double thresh);
 
         void set_mode(int mode_) { mode = mode_; };
         int get_mode() { return mode; };
 
         void update();
- };
+
+};

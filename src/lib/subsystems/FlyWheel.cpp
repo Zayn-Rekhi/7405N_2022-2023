@@ -34,3 +34,18 @@ void FlyWheel::update() {
 //    }
     Robot::FLY.move_voltage(vel);
 }
+
+bool FlyWheel::reached_target(double threshold) {
+    int reached_target_count = 0;
+    for (int i = 0; i < bufferVelSize; i++) {
+        if(std::abs(target_speed.load() - get_velocity()) < threshold) {
+            reached_target_count++;
+        }
+    }
+
+    if(reached_target_count / bufferVelSize == 1) {
+        return true;
+    }
+
+    return false;
+}
