@@ -212,7 +212,7 @@ void Robot::driver_thread(void *ptr) {
                         flyspeed = 0; //try setting the velocity just once
                         break;
                     case 1:
-                        flyspeed = 1550;
+                        flyspeed = 1375;
                         break;
                     case 2:
                         flyspeed = 2500;
@@ -220,7 +220,7 @@ void Robot::driver_thread(void *ptr) {
                 }
 
                 if(activate_angle_change && flyspeed_mode) {
-                    flyspeed = 1500;
+                    flyspeed = 1375;
                 }
 
                 flywheel.set_velocity(flyspeed);
